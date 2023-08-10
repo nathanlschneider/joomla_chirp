@@ -7,8 +7,8 @@
    <license>GNU General Public License version 2 or later; see LICENSE.txt</license>
    <authorEmail>nathan@quirkable.io</authorEmail>
    <authorUrl>https://quirkable.io</authorUrl>
-   <version>4.0.0</version>
-   <description>PLG_SEARCH_CATEGORIES_XML_DESCRIPTION</description>
+   <version>1.0.0</version>
+   <description>PLG_AJAX_CHIRP_XML_DESCRIPTION</description>
    <files>
       <filename plugin="chirp">plg_ajax_chirp.php</filename>
    </files>

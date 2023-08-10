@@ -1,5 +1,4 @@
 <?php
-//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
 // no direct access
 defined('_JEXEC') or die;
 
