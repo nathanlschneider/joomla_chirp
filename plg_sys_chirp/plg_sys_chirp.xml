@@ -12,6 +12,8 @@
    <files>
       <filename plugin="chirp">plg_sys_chirp.js</filename>
       <filename plugin="chirp">plg_sys_chirp.php</filename>
-	  <filename plugin="chirp">chirp.css</filename>
+	   <filename plugin="chirp">chirp.css</filename>
+      <filename plugin="chirp">purify.min.js</filename>
+      <filename plugin="chirp">purify.min.js.map</filename>
    </files>
 </extension>
