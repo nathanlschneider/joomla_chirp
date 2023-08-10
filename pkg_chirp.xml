@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<extension type="package" method="upgrade">
+   <name>Chirp Package</name>
+   <author>Nathan Schneider</author>
+   <creationDate>August 2023</creationDate>
+   <packagename>chirp</packagename>
+   <version>4.0.0</version>
+   <url>https://quirkable.io</url>
+   <packager>Nathan Schneider</packager>
+   <packagerurl>https://quirkable.io</packagerurl>
+   <description>Chirp Package File</description>
+   <update>https://qrkbl.com/joomla/chirp/update</update>
+   <blockChildUninstall>true</blockChildUninstall>
+   <files folder="packages">
+      <file type="component" id="com_chirp">com_chirp-1.0.0.zip</file>
+      <file type="plugin" id="chirp" group="system">plg_sys_chirp.zip</file>
+      <file type="plugin" id="chirp" group="ajax">plg_ajax_chirp.zip</file>
+   </files>
+</extension>
