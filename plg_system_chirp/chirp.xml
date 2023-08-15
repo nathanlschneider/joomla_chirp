@@ -9,6 +9,7 @@
    <authorUrl>https://quirkable.io</authorUrl>
    <version>1.0.0</version>
    <description>PLG_SYSTEM_CHIRP_XML_DESCRIPTION</description>
+   <scriptfile>install_script.php</scriptfile>
    <files>
      <filename plugin="chirp">chirp.php</filename>
    </files>

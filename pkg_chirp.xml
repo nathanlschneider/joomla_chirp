@@ -9,10 +9,10 @@
    <packager>Nathan Schneider</packager>
    <packagerurl>https://quirkable.io</packagerurl>
    <description>Chirp Package File</description>
-   <update>https://qrkbl.com/joomla/chirp/update</update>
+   <update>https://qrkbl.com/joomla/chirp/update.xml</update>
    <blockChildUninstall>true</blockChildUninstall>
    <files folder="packages">
-      <file type="component" id="com_chirp">com_chirp-1.0.0.zip</file>
-      <file type="plugin" id="chirp" group="system">plg_sys_chirp.zip</file>
+      <file type="component" id="chirp">com_chirp-1.0.0.zip</file>
+      <file type="plugin" id="chirp" group="system">plg_system_chirp-1.0.0.zip</file>
    </files>
 </extension>
