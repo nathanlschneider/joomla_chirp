@@ -7,7 +7,7 @@
    <license>GNU General Public License version 2 or later; see LICENSE</license>
    <authorEmail>nathan@quirkable.io</authorEmail>
    <authorUrl>https://quirkable.io</authorUrl>
-   <version>1.0.0</version>
+   <version>0.1.0</version>
    <description>PLG_SYSTEM_CHIRP_XML_DESCRIPTION</description>
    <scriptfile>install_script.php</scriptfile>
    <files>
@@ -17,4 +17,7 @@
      <folder>js</folder>
      <folder>css</folder>
    </media>
+   <updateservers>
+        <server type="extension" priority="1" name="plg_system_chirp">https://qrkbl.com/joomla/chirp/update.xml</server>
+    </updateservers>
 </extension>
