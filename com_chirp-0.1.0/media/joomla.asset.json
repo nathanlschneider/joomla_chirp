@@ -1,0 +1,29 @@
+{
+  "$schema": "https://developer.joomla.org/schemas/json-schema/web_assets.json",
+  "name": "com_chirp",
+  "version": "CVS: 0.1.0",
+  "license": "GNU General Public License version 2 or later; see LICENSE.txt",
+  "assets": [
+    {
+      "name": "com_chirp.admin",
+      "type": "style",
+      "uri": "com_chirp/admin.css"
+    },
+    {
+      "name": "com_chirp.admin",
+      "type": "script",
+      "uri": "com_chirp/admin.js",
+      "dependencies": [
+        "jquery"
+      ],
+      "attributes": {
+        "defer": true
+      }
+    },
+    {
+        "name": "com_chirp.list",
+        "type": "style",
+        "uri": "com_chirp/list.css"
+    }
+  ]
+}
