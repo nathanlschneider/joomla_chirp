@@ -21,14 +21,14 @@ use Joomla\CMS\Uri\Uri;
 use Joomla\Utilities\ArrayHelper;
 
 /**
- * Controlpanel list controller class.
+ * Controlpanels list controller class.
  *
  * @since  0.1.0
  */
-class ControlpanelController extends AdminController
+class ControlpanelsController extends AdminController
 {
 	/**
-	 * Method to clone existing Controlpanel
+	 * Method to clone existing Controlpanels
 	 *
 	 * @return  void
 	 *
@@ -59,7 +59,7 @@ class ControlpanelController extends AdminController
 			Factory::getApplication()->enqueueMessage($e->getMessage(), 'warning');
 		}
 
-		$this->setRedirect('index.php?option=com_chirp&view=controlpanel');
+		$this->setRedirect('index.php?option=com_chirp&view=controlpanels');
 	}
 
 	/**

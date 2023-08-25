@@ -21,11 +21,11 @@ use \Joomla\Utilities\ArrayHelper;
 use Chirp\Component\Chirp\Administrator\Helper\ChirpHelper;
 
 /**
- * Methods supporting a list of Controlpanel records.
+ * Methods supporting a list of Controlpanels records.
  *
  * @since  0.1.0
  */
-class ControlpanelModel extends ListModel
+class ControlpanelsModel extends ListModel
 {
 	
 

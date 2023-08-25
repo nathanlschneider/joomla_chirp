@@ -7,7 +7,7 @@
     <author>Nathan Schneider</author>
     <authorEmail>nathan@quirkable.io</authorEmail>
     <authorUrl>https://quirkable.io</authorUrl>
-    <version>CVS: 0.1.0</version>
+    <version>0.1.0</version>
     <description>COM_CHIRP_XML_DESCRIPTION</description>
     <namespace path="src">Chirp\Component\Chirp</namespace>
     
@@ -51,8 +51,9 @@
             
 			<menu link="option=com_chirp&amp;view=products" view="products" alt="Chirp/Products">COM_CHIRP_TITLE_PRODUCTS</menu>
 
-			<menu link="option=com_chirp&amp;view=controlpanel" view="controlpanel" alt="Chirp/Controlpanel">COM_CHIRP_TITLE_CONTROLPANEL</menu>
-
+			<menu link="option=com_chirp&amp;view=controlpanels" view="controlpanels" alt="Chirp/Controlpanel">COM_CHIRP_TITLE_CONTROLPANELS</menu>
+            
+            <menu link="option=com_config&amp;view=component&amp;component=com_chirp&amp;path=&amp;return=aHR0cHM6Ly9qNC51bHRyYXdlYi5zeXN0ZW1zL2FkbWluaXN0cmF0b3IvaW5kZXgucGhwP29wdGlvbj1jb21fY2hpcnAmdmlldz1wcm9kdWN0cw%3D%3D" view="component" alt="Chirp/Settings">COM_CHIRP_TITLE_SETTINGS</menu>
         </submenu>
         <files folder="administrator">
             <filename>access.xml</filename>
@@ -82,7 +83,7 @@
     
 
     <updateservers>
-        <server type="extension" priority="1" name="com_chirp">https://nocdn.component-creator.com/index.php?task=builder.preupdatecheckhook&amp;option=com_combuilder&amp;component=NzUwMDktMjA4NjAw</server>
+        <server type="extension" priority="1" name="com_chirp">https://qrkbl.com/joomla/chirp/update.xml</server>
     </updateservers>
 </extension>
 <!-- Component built by the Joomla Component Creator -->

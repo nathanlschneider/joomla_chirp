@@ -7,7 +7,7 @@
  * @license    GNU General Public License version 2 or later; see LICENSE.txt
  */
 
-namespace Chirp\Component\Chirp\Administrator\View\Controlpanel;
+namespace Chirp\Component\Chirp\Administrator\View\Controlpanels;
 // No direct access
 defined('_JEXEC') or die;
 
@@ -20,7 +20,7 @@ use \Joomla\Component\Content\Administrator\Extension\ContentComponent;
 use \Joomla\CMS\Form\Form;
 use \Joomla\CMS\HTML\Helpers\Sidebar;
 /**
- * View class for a list of Controlpanel.
+ * View class for a list of Controlpanels.
  *
  * @since  0.1.0
  */
@@ -71,12 +71,12 @@ class HtmlView extends BaseHtmlView
 		$state = $this->get('State');
 		$canDo = ChirpHelper::getActions();
 
-		ToolbarHelper::title(Text::_('COM_CHIRP_TITLE_CONTROLPANEL'), "generic");
+		ToolbarHelper::title(Text::_('COM_CHIRP_TITLE_CONTROLPANELS'), "generic");
 
 		$toolbar = Toolbar::getInstance('toolbar');
 
 		// Check if the form exists before showing the add/edit buttons
-		$formPath = JPATH_COMPONENT_ADMINISTRATOR . '/src/View/Controlpanel';
+		$formPath = JPATH_COMPONENT_ADMINISTRATOR . '/src/View/Controlpanels';
 
 		if (file_exists($formPath))
 		{
@@ -99,14 +99,14 @@ class HtmlView extends BaseHtmlView
 
 			if (isset($this->items[0]->state))
 			{
-				$childBar->publish('controlpanel.publish')->listCheck(true);
-				$childBar->unpublish('controlpanel.unpublish')->listCheck(true);
-				$childBar->archive('controlpanel.archive')->listCheck(true);
+				$childBar->publish('controlpanels.publish')->listCheck(true);
+				$childBar->unpublish('controlpanels.unpublish')->listCheck(true);
+				$childBar->archive('controlpanels.archive')->listCheck(true);
 			}
 			elseif (isset($this->items[0]))
 			{
 				// If this component does not use state then show a direct delete button as we can not trash
-				$toolbar->delete('controlpanel.delete')
+				$toolbar->delete('controlpanels.delete')
 				->text('JTOOLBAR_EMPTY_TRASH')
 				->message('JGLOBAL_CONFIRM_DELETE')
 				->listCheck(true);
@@ -115,17 +115,17 @@ class HtmlView extends BaseHtmlView
 			$childBar->standardButton('duplicate')
 				->text('JTOOLBAR_DUPLICATE')
 				->icon('fas fa-copy')
-				->task('controlpanel.duplicate')
+				->task('controlpanels.duplicate')
 				->listCheck(true);
 
 			if (isset($this->items[0]->checked_out))
 			{
-				$childBar->checkin('controlpanel.checkin')->listCheck(true);
+				$childBar->checkin('controlpanels.checkin')->listCheck(true);
 			}
 
 			if (isset($this->items[0]->state))
 			{
-				$childBar->trash('controlpanel.trash')->listCheck(true);
+				$childBar->trash('controlpanels.trash')->listCheck(true);
 			}
 		}
 
@@ -137,7 +137,7 @@ class HtmlView extends BaseHtmlView
 
 			if ($this->state->get('filter.state') == ContentComponent::CONDITION_TRASHED && $canDo->get('core.delete'))
 			{
-				$toolbar->delete('controlpanel.delete')
+				$toolbar->delete('controlpanels.delete')
 					->text('JTOOLBAR_EMPTY_TRASH')
 					->message('JGLOBAL_CONFIRM_DELETE')
 					->listCheck(true);
@@ -150,7 +150,7 @@ class HtmlView extends BaseHtmlView
 		}
 
 		// Set sidebar action
-		Sidebar::setAction('index.php?option=com_chirp&view=controlpanel');
+		Sidebar::setAction('index.php?option=com_chirp&view=controlpanels');
 	}
 	
 	/**
