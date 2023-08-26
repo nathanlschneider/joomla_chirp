@@ -1,4 +1,5 @@
 <?php
+
 /**
  * @version    CVS: 0.1.0
  * @package    Com_Chirp
@@ -26,12 +27,12 @@ class DisplayController extends \Joomla\CMS\MVC\Controller\BaseController
 	/**
 	 * Constructor.
 	 *
-	 * @param  array                $config   An optional associative array of configuration settings.
+	 * @param   array                $config   An optional associative array of configuration settings.
 	 * Recognized key values include 'name', 'default_task', 'model_path', and
 	 * 'view_path' (this list is not meant to be comprehensive).
-	 * @param  MVCFactoryInterface  $factory  The factory.
-	 * @param  CMSApplication       $app      The JApplication for the dispatcher
-	 * @param  Input              $input    Input
+	 * @param   MVCFactoryInterface  $factory  The factory.
+	 * @param   CMSApplication       $app      The JApplication for the dispatcher
+	 * @param   Input                $input    Input
 	 *
 	 * @since  0.1.0
 	 */
@@ -56,9 +57,9 @@ class DisplayController extends \Joomla\CMS\MVC\Controller\BaseController
 		$view = $this->input->getCmd('view', 'products');
 		$view = $view == "featured" ? 'products' : $view;
 		$this->input->set('view', $view);
-		
 
 		parent::display($cachable, $urlparams);
+
 		return $this;
 	}
 }
