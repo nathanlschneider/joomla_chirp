@@ -18,7 +18,7 @@ use \Joomla\CMS\Layout\LayoutHelper;
 use \Joomla\CMS\Language\Text;
 use Joomla\CMS\Session\Session;
 
-$isEshop = $this->getModel()->checkCom('com_eshop');
-$isHikaShop = $this->getModel()->checkCom('com_hikashop');
-$isEasyShop = $this->getModel()->checkCom('com_easyshop');
-$isPhocaCart = $this->getModel()->checkCom('com_phocacartt');
+// $isEshop = $this->getModel()->checkCom('com_eshop');
+// $isHikaShop = $this->getModel()->checkCom('com_hikashop');
+// $isEasyShop = $this->getModel()->checkCom('com_easyshop');
+// $isPhocaCart = $this->getModel()->checkCom('com_phocacartt');
