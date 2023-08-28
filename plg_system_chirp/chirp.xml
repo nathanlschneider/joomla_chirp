@@ -18,6 +18,6 @@
      <folder>css</folder>
    </media>
    <updateservers>
-        <server type="extension" priority="1" name="plg_system_chirp">https://qrkbl.com/joomla/chirp/update.xml</server>
+        <server type="extension" priority="1" name="plg_system_chirp">https://qrkbl.com/joomla/chirp/plg_system_chirp_update.xml</server>
     </updateservers>
 </extension>

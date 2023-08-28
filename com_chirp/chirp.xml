@@ -83,7 +83,7 @@
     
 
     <updateservers>
-        <server type="extension" priority="1" name="com_chirp">https://qrkbl.com/joomla/chirp/update.xml</server>
+        <server type="extension" priority="1" name="com_chirp">https://qrkbl.com/joomla/chirp/com_chirp_update.xml</server>
     </updateservers>
 </extension>
 <!-- Component built by the Joomla Component Creator -->
