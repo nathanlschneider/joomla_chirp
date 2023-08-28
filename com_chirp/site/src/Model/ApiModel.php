@@ -34,6 +34,16 @@ class ApiModel extends ListModel
 	 *
 	 * @return string
 	 */
+	public function modelTest()
+	{
+		return "MODEL TESTED";
+	}
+
+	/**
+	 * Undocumented function
+	 *
+	 * @return string
+	 */
 	public function buildName()
 	{
 		$letters = ["A", "B", "C", "D", "E", "F", "G", "H", "I", "J", "K", "L", "M", "N", "O", "P", "R", "S", "T", "U", "V", "W"];

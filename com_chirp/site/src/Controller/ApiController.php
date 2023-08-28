@@ -57,6 +57,18 @@ class ApiController extends \Joomla\CMS\MVC\Controller\BaseController
 	}
 
 	/**
+	 * get function
+	 *
+	 * @return void
+	 */
+	public function get()
+	{
+		$result = self::apiModel()->modelTest();
+		echo $result;
+		die;
+	}
+
+	/**
 	 * Undocumented function
 	 *
 	 * @return void
@@ -64,7 +76,22 @@ class ApiController extends \Joomla\CMS\MVC\Controller\BaseController
 	public function getName()
 	{
 		$name = self::apiModel()->buildName();
-		header($name);
-		die;
+
+		if ($name)
+		{
+			http_response_code(200);
+			header('Content-Type: application/json');
+			$response = array('status' => 'success', 'name' => $name);
+			echo json_encode($response);
+			die;
+		}
+		else
+		{
+			http_response_code(500);
+			header('Content-Type: application/json');
+			$response = array('status' => 'failed', 'message' => 'An error occoured.');
+			echo json_encode($response);
+			die;
+		}
 	}
 }
