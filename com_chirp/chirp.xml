@@ -10,9 +10,8 @@
     <version>0.1.0</version>
     <description>COM_CHIRP_XML_DESCRIPTION</description>
     <namespace path="src">Chirp\Component\Chirp</namespace>
-    
-    
-    
+
+
     <install> <!-- Runs on install -->
         <sql>
             <file driver="mysql" charset="utf8">sql/install.mysql.utf8.sql</file>
@@ -29,7 +28,6 @@
         </sql>
     </uninstall>
 
-    
 
     <files folder="site">
         <folder>src</folder>
@@ -42,18 +40,22 @@
         <filename>joomla.asset.json</filename>
     </media>
     <languages folder="site/languages">
-        
-			<language tag="en-GB">en-GB/com_chirp.ini</language>
+
+        <language tag="en-GB">en-GB/com_chirp.ini</language>
     </languages>
     <administration>
         <menu>COM_CHIRP</menu>
         <submenu>
-            
-			<menu link="option=com_chirp&amp;view=products" view="products" alt="Chirp/Products">COM_CHIRP_TITLE_PRODUCTS</menu>
 
-			<menu link="option=com_chirp&amp;view=controlpanels" view="controlpanels" alt="Chirp/Controlpanel">COM_CHIRP_TITLE_CONTROLPANELS</menu>
-            
-            <menu link="option=com_config&amp;view=component&amp;component=com_chirp&amp;path=&amp;return=aHR0cHM6Ly9qNC51bHRyYXdlYi5zeXN0ZW1zL2FkbWluaXN0cmF0b3IvaW5kZXgucGhwP29wdGlvbj1jb21fY2hpcnAmdmlldz1wcm9kdWN0cw%3D%3D" view="component" alt="Chirp/Settings">COM_CHIRP_TITLE_SETTINGS</menu>
+            <menu link="option=com_chirp&amp;view=products" view="products" alt="Chirp/Products">
+                COM_CHIRP_TITLE_PRODUCTS</menu>
+
+            <menu link="option=com_chirp&amp;view=controlpanels" view="controlpanels"
+                alt="Chirp/Controlpanel">COM_CHIRP_TITLE_CONTROLPANELS</menu>
+
+            <menu
+                link="option=com_config&amp;view=component&amp;component=com_chirp&amp;path=&amp;return=aHR0cHM6Ly9qNC51bHRyYXdlYi5zeXN0ZW1zL2FkbWluaXN0cmF0b3IvaW5kZXgucGhwP29wdGlvbj1jb21fY2hpcnAmdmlldz1wcm9kdWN0cw%3D%3D"
+                view="component" alt="Chirp/Settings">COM_CHIRP_TITLE_SETTINGS</menu>
         </submenu>
         <files folder="administrator">
             <filename>access.xml</filename>
@@ -66,9 +68,9 @@
             <folder>sql</folder>
         </files>
         <languages folder="administrator/languages">
-            
-			<language tag="en-GB">en-GB/com_chirp.ini</language>
-			<language tag="en-GB">en-GB/com_chirp.sys.ini</language>
+
+            <language tag="en-GB">en-GB/com_chirp.ini</language>
+            <language tag="en-GB">en-GB/com_chirp.sys.ini</language>
         </languages>
     </administration>
     <config>
@@ -80,10 +82,11 @@
     </config>
     <plugins>
     </plugins>
-    
+
 
     <updateservers>
-        <server type="extension" priority="1" name="com_chirp">https://qrkbl.com/joomla/chirp/com_chirp_update.xml</server>
+        <server type="extension" priority="1" name="com_chirp">
+            https://qrkbl.com/joomla/chirp/com_chirp_update.xml</server>
     </updateservers>
 </extension>
 <!-- Component built by the Joomla Component Creator -->

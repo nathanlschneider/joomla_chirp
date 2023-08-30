@@ -17,6 +17,8 @@ use Joomla\CMS\Factory;
 use Joomla\CMS\Language\Text;
 use Joomla\CMS\MVC\Factory\MVCFactoryInterface;
 use Joomla\CMS\MVC\Model\BaseDatabaseModel;
+use Joomla\CMS\MVC\Controller\FormController;
+use Joomla\CMS\MVC\Controller\BaseController;
 
 
 /**
@@ -24,24 +26,8 @@ use Joomla\CMS\MVC\Model\BaseDatabaseModel;
  *
  * @since  0.1.0
  */
-class ApiController extends \Joomla\CMS\MVC\Controller\BaseController
+class ApiController extends BaseController
 {
-	/**
-	 * Constructor.
-	 *
-	 * @param   array                $config   An optional associative array of configuration settings.
-	 * Recognized key values include 'name', 'default_task', 'model_path', and
-	 * 'view_path' (this list is not meant to be comprehensive).
-	 * @param   MVCFactoryInterface  $factory  The factory.
-	 * @param   CMSApplication       $app      The JApplication for the dispatcher
-	 * @param   Input                $input    Input
-	 *
-	 * @since  0.1.0
-	 */
-	public function __construct($config = array(), MVCFactoryInterface $factory = null, $app = null, $input = null)
-	{
-		parent::__construct($config, $factory, $app, $input);
-	}
 
 	/**
 	 * getModel function
@@ -56,16 +42,45 @@ class ApiController extends \Joomla\CMS\MVC\Controller\BaseController
 		return $model;
 	}
 
+
 	/**
-	 * get function
+	 * Undocumented function
 	 *
 	 * @return void
 	 */
-	public function get()
+	public function settings()
 	{
-		$result = self::apiModel()->modelTest();
-		echo $result;
-		die;
+		$app = Factory::getApplication();
+		$params = $app->getParams();
+
+		try
+		{
+			http_response_code(200);
+			header('Content-Type: application/json');
+			$response = array(
+				'status' => 'success',
+				// 'usergroups' => $params->get('usergroups'),
+				'minTime' => intval($params->get('mintime')),
+				'maxTime' => intval($params->get('maxtime')),
+				// "eshop" => intval($params->get('eshop')),
+				// "hikashop" => intval($params->get('hikashop')),
+				// "easyshop" => intval($params->get('easyshop')),
+				// "phocacart" => intval($params->get('phocacart')),
+				"notificationlocation" => intval($params->get('notificationlocation')),
+				// "dummyitems" => intval($params->get('dummyitems')),
+			);
+			echo json_encode($response);
+			die;
+		}
+		catch (Exception $e)
+		{
+			error_log(print_r($e, true));
+			http_response_code(500);
+			header('Content-Type: application/json');
+			$response = array('status' => 'failed', 'message' => 'An error has occoured.');
+			echo json_encode($response);
+			die;
+		}
 	}
 
 	/**
@@ -73,7 +88,7 @@ class ApiController extends \Joomla\CMS\MVC\Controller\BaseController
 	 *
 	 * @return void
 	 */
-	public function getName()
+	public function name()
 	{
 		$name = self::apiModel()->buildName();
 

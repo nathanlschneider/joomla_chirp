@@ -34,7 +34,6 @@ class PlgSystemChirp extends CMSPlugin implements SubscriberInterface
 	 */
 	public static function getSubscribedEvents(): array
 	{
-
 		return [
 			'onBeforeCompileHead' => 'insertCode',
 		];
@@ -48,15 +47,24 @@ class PlgSystemChirp extends CMSPlugin implements SubscriberInterface
 	 */
 	public function insertCode(Event $event)
 	{
+		$user = Factory::getUser();
+		$app = Factory::getApplication();
+		$document = Factory::getApplication()->getDocument();
+		$componentParams = $app->getParams('com_chirp');
+		$paramGroups = $componentParams->get('usergroups', []);
+		$userGroups = $user->get('groups');
 
 		if (!\Joomla\CMS\Factory::getApplication()->isClient('site'))
 		{
 			return false;
 		}
 
-		$document = Factory::getApplication()->getDocument();
-
 		if (!($document instanceof \Joomla\CMS\Document\HtmlDocument))
+		{
+			return false;
+		}
+
+		if (empty(array_intersect($paramGroups, $userGroups)))
 		{
 			return false;
 		}
