@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<extension type="plugin" group="behaviour" method="upgrade">
+  <name>plg_behaviour_chirp</name>
+  <author>Nathan Schneider</author>
+  <creationDate>August 2023</creationDate>
+  <copyright>Copyright (C) 2023 Quirkable. All rights reserved.</copyright>
+  <license>GNU General Public License version 2 or later; see LICENSE</license>
+  <authorEmail>nathan@quirkable.io</authorEmail>
+  <authorUrl>https://quirkable.io</authorUrl>
+  <version>0.1.0</version>
+  <description>PLG_Behaviour_CHIRP_XML_DESCRIPTION</description>
+  <scriptfile>install_script.php</scriptfile>
+  <files>
+    <filename plugin="chirp">chirp.php</filename>
+  </files>
+  <updateservers>
+    <server type="extension" priority="1" name="plg_behaviour_chirp">
+      https://qrkbl.com/joomla/chirp/plg_behaviour_chirp_update.xml</server>
+  </updateservers>
+</extension>

@@ -4,7 +4,8 @@ const fs = require('fs');
 
 // Define source directories for zipping
 const sourceDir1 = 'plg_system_chirp';
-const sourceDir2 = 'com_chirp';
+const sourceDir2 = 'plg_system_chirp';
+const sourceDir3 = 'com_chirp';
 
 // Define the destination directory for zipped packages
 const packagesDir = 'packages';
@@ -19,6 +20,9 @@ gulp.task('zipDirs', () => {
   .pipe(gulp.dest(packagesDir))
   .pipe(gulp.src(sourceDir2 + '/**/*', { base: '.' }))
   .pipe(zip(`${sourceDir2}.zip`))
+  .pipe(gulp.dest(packagesDir))
+  .pipe(gulp.src(sourceDir3 + '/**/*', { base: '.' }))
+  .pipe(zip(`${sourceDir3}.zip`))
   .pipe(gulp.dest(packagesDir))
 });
 

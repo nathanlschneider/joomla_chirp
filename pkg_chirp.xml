@@ -13,6 +13,6 @@
    <files folder="packages">
       <file type="component" id="com_chirp">com_chirp.zip</file>
       <file type="plugin" id="chirp" group="system">plg_system_chirp.zip</file>
-      
+      <file type="plugin" id="chirp" group="behaviour">plg_behaviour_chirp.zip</file>
    </files>
 </extension>

@@ -14,10 +14,10 @@ use Joomla\Event\SubscriberInterface;
 use Joomla\CMS\Factory;
 
 /**
- * System Plugin for Chirp
+ * Behaviour Plugin for Chirp
  * @since 1.0.0
  */
-class PlgSystemChirp extends CMSPlugin implements SubscriberInterface
+class PlgBehaviourChirp extends CMSPlugin implements SubscriberInterface
 {
 	/**
 	 * Load the language file on instantiation
@@ -35,17 +35,17 @@ class PlgSystemChirp extends CMSPlugin implements SubscriberInterface
 	public static function getSubscribedEvents(): array
 	{
 		return [
-			'onBeforeCompileHead' => 'insertCode',
+			'onTableAfterStore' => 'checkOrders',
 		];
 	}
 
 	/**
-	 * Undocumented function
+	 * InsertCode function
 	 *
 	 * @param   Event $event I have no idea what the linter wants from me.
 	 * @return  boolean
 	 */
-	public function insertCode(Event $event)
+	public function checkOrders(Event $event)
 	{
 
 		if (!\Joomla\CMS\Factory::getApplication()->isClient('site'))
@@ -60,22 +60,10 @@ class PlgSystemChirp extends CMSPlugin implements SubscriberInterface
 			return false;
 		}
 
-		$user = Factory::getUser();
+		$tables = [];
 		$app = Factory::getApplication();
 		$componentParams = $app->getParams('com_chirp');
 		$paramGroups = $componentParams->get('usergroups', []);
-		$userGroups = $user->get('groups');
-
-		if (empty(array_intersect($paramGroups, $userGroups)))
-		{
-			return false;
-		}
-
-		/** @var Joomla\CMS\WebAsset\WebAssetManager $wa */
-		$wa = Factory::getApplication()->getDocument()->getWebAssetManager();
-		$wa->registerAndUseScript('chirp', 'media/plg_system_chirp/js/chirp.js', [], ['defer' => true], ['core']);
-		$wa->registerAndUseScript('purify', 'media/plg_system_chirp/js/purify.js', [], ['defer' => true], ['core']);
-		$wa->registerAndUseStyle('chirp', 'media/plg_system_chirp/css/chirp.css', [], [], []);
 
 		return true;
 	}

@@ -47,9 +47,6 @@
         <menu>COM_CHIRP</menu>
         <submenu>
 
-            <menu link="option=com_chirp&amp;view=products" view="products" alt="Chirp/Products">
-                COM_CHIRP_TITLE_PRODUCTS</menu>
-
             <menu link="option=com_chirp&amp;view=controlpanels" view="controlpanels"
                 alt="Chirp/Controlpanel">COM_CHIRP_TITLE_CONTROLPANELS</menu>
 
@@ -89,5 +86,3 @@
             https://qrkbl.com/joomla/chirp/com_chirp_update.xml</server>
     </updateservers>
 </extension>
-<!-- Component built by the Joomla Component Creator -->
-<!-- http://www.component-creator.com/ -->

@@ -25,12 +25,6 @@
       <option value="0">JNO</option>
       <option value="1">JYES</option>
     </field>
-    <field name="dummyitems" type="radio" buttons="true" layout="joomla.form.field.radio.switcher"
-      default="0" label="COM_CHIRP_FORM_LBL_DUMMYITEMS" description="COM_CHIRP_FORM_DESC_DUMMYITEMS"
-      hint="COM_CHIRP_FORM_LBL_DUMMYITEMS">
-      <option value="0">JNO</option>
-      <option value="1">JYES</option>
-    </field>
     <field name="usergroups" query="SELECT * from `#__usergroups`" key_field="id"
       value_field="title" multiple="true" type="sql" label="COM_CHIRP_FORM_LBL_USERGROUPS"
       description="COM_CHIRP_FORM_DESC_USERGROUPS" hint="COM_CHIRP_FORM_LBL_USERGROUPS" />
