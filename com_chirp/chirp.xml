@@ -49,9 +49,8 @@
 
             <menu link="option=com_chirp&amp;view=controlpanels" view="controlpanels"
                 alt="Chirp/Controlpanel">COM_CHIRP_TITLE_CONTROLPANELS</menu>
-
             <menu
-                link="option=com_config&amp;view=component&amp;component=com_chirp&amp;path=&amp;return=aHR0cHM6Ly9qNC51bHRyYXdlYi5zeXN0ZW1zL2FkbWluaXN0cmF0b3IvaW5kZXgucGhwP29wdGlvbj1jb21fY2hpcnAmdmlldz1wcm9kdWN0cw%3D%3D"
+                link="option=com_config&amp;view=component&amp;component=com_chirp&amp;path=&amp;return="
                 view="component" alt="Chirp/Settings">COM_CHIRP_TITLE_SETTINGS</menu>
         </submenu>
         <files folder="administrator">

@@ -3,7 +3,7 @@ const zip = require('gulp-zip');
 const fs = require('fs');
 
 // Define source directories for zipping
-const sourceDir1 = 'plg_system_chirp';
+const sourceDir1 = 'plg_behaviour_chirp';
 const sourceDir2 = 'plg_system_chirp';
 const sourceDir3 = 'com_chirp';
 

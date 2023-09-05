@@ -40,11 +40,6 @@
       <option value="7">Bottom Left</option>
       <option value="8">Center Left</option>
     </field>
-    <field name="mintime" type="text" class="validate-numeric" default="20000" label="Minimum Time"
-      description="" size="10" />
-    <field name="maxtime" type="text" class="validate-numeric" default="50000" label="Maximum Time"
-      description="" size="10" />
-
   </fieldset>
 
   <fieldset name="permissions" description="JCONFIG_PERMISSIONS_DESC"

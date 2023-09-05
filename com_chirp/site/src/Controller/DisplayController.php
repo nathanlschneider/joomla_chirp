@@ -54,8 +54,8 @@ class DisplayController extends \Joomla\CMS\MVC\Controller\BaseController
 	public function display($cachable = false, $urlparams = false)
 	{
 
-		$view = $this->input->getCmd('view', 'products');
-		$view = $view == "featured" ? 'products' : $view;
+		$view = $this->input->getCmd('view', 'controlpanels');
+		$view = $view == "featured" ? 'controlpanels' : $view;
 		$this->input->set('view', $view);
 
 		parent::display($cachable, $urlparams);

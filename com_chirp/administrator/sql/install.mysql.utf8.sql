@@ -9,12 +9,16 @@ CREATE TABLE IF NOT EXISTS `#__chirp_control` (
 PRIMARY KEY (`id`)
 ) DEFAULT COLLATE=utf8mb4_unicode_ci;
 
-CREATE TABLE `#__chirp_order_ref` (
-  `id` int(11) NOT NULL AUTO_INCREMENT,
+ CREATE TABLE IF NOT EXISTS `#__chirp_order_ref` (
+  `id` int(11) UNSIGNED NOT NULL AUTO_INCREMENT,
   `updated` date NOT NULL DEFAULT current_timestamp(),
-  `user_id` int(11) NOT NULL,
-  `order_id` int(11) NOT NULL,
-  `table_name` varchar(64) NOT NULL,
-  PRIMARY KEY (`id`),
-  UNIQUE KEY `table_name` (`table_name`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci
+  `order_id` int(11) NOT NULL DEFAULT 0,
+  `table_name` varchar(64) NULL,
+  PRIMARY KEY (`id`)
+) DEFAULT COLLATE=utf8mb4_unicode_ci;
+
+INSERT INTO `#__chirp_order_ref` ( table_name ) VALUES ( 'easyshop_orders' );
+INSERT INTO `#__chirp_order_ref` ( table_name ) VALUES ( 'eshop_orders' );
+INSERT INTO `#__chirp_order_ref` ( table_name ) VALUES ( 'hikashop_order' );
+INSERT INTO `#__chirp_order_ref` ( table_name ) VALUES ( 'phocacart_orders' );
+
