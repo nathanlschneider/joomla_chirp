@@ -21,16 +21,16 @@ else
 {
 	$contents = file_get_contents('event.data');
 
-	if ($contents !== "0")
+	if ($contents)
 	{
-		$json = json_decode($contents);
+		// $json = json_decode($contents);
 		echo "event: alert\n";
 		echo "data: $contents\n\n";
 		ob_flush();
 		flush();
 
 		sleep(4);
-		file_put_contents('event.data', '0');
+		file_put_contents('event.data', '');
 	}
 	else
 	{

@@ -74,7 +74,6 @@ class PlgSystemChirp extends CMSPlugin implements SubscriberInterface
 		/** @var Joomla\CMS\WebAsset\WebAssetManager $wa */
 		$wa = Factory::getApplication()->getDocument()->getWebAssetManager();
 		$wa->registerAndUseScript('chirp', 'media/plg_system_chirp/js/chirp.js', [], ['defer' => true], ['core']);
-		$wa->registerAndUseScript('purify', 'media/plg_system_chirp/js/purify.js', [], ['defer' => true], ['core']);
 		$wa->registerAndUseStyle('chirp', 'media/plg_system_chirp/css/chirp.css', [], [], []);
 
 		return true;

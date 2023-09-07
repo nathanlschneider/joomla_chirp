@@ -13,7 +13,6 @@
   <files>
     <filename plugin="chirp">chirp.php</filename>
     <filename plugin="chirp">event.php</filename>
-    <filename plugin="chirp">event.data</filename>
   </files>
   <updateservers>
     <server type="extension" priority="1" name="plg_behaviour_chirp">

@@ -62,86 +62,36 @@ class PlgBehaviourChirp extends CMSPlugin implements SubscriberInterface
 
 		$app = Factory::getApplication();
 		$params = $app->getParams('com_chirp');
-		$eshop = $params->get('eshop', 0);
-		$easyshop = $params->get('easyshop', 0);
-		$phocacart = $params->get('phocacart', 0);
-		$hikashop = $params->get('hikashop', 0);
 
-		if ($eshop)
+		$ecommerceSystems = [
+			'eshop' => 'eshop_orders',
+			'easyshop' => 'easyshop_orders',
+			'hikashop' => 'hikashop_order',
+			'phocacart' => 'phocacart_orders',
+		];
+
+		foreach ($ecommerceSystems as $system => $shop)
 		{
-			$shop = "eshop_orders";
-			$newOrderExists = self::checkDB($shop);
-
-			if ($newOrderExists)
+			if ($params->get($system, 0))
 			{
-				// Update ref table with new id
-				$updateSuccessful = self::updateDB($shop);
+				$newOrderExists = self::checkDB($shop);
 
-				if ($updateSuccessful)
+				if ($newOrderExists)
 				{
-					// Alert notify
-					self::notify($shop);
-				}
-			}
-		}
+					// Update ref table with new id
+					$updateSuccessful = self::updateDB($shop);
 
-		if ($easyshop)
-		{
-			$shop = "easyshop_orders";
-			$newOrderExists = self::checkDB($shop);
-
-			if ($newOrderExists)
-			{
-				// Update ref table with new id
-				$updateSuccessful = self::updateDB($shop);
-
-				if ($updateSuccessful)
-				{
-					// Alert notify
-					self::notify($shop);
-				}
-			}
-		}
-
-		if ($hikashop)
-		{
-			$shop = 'hikashop_order';
-			$newOrderExists = self::checkDB($shop);
-
-			if ($newOrderExists)
-			{
-				// Update ref table with new id
-				$updateSuccessful = self::updateDB($shop);
-
-				if ($updateSuccessful)
-				{
-					// Alert notify
-					self::notify($shop);
-				}
-			}
-		}
-
-		if ($phocacart)
-		{
-			$shop = 'phocacart_orders';
-			$newOrderExists = self::checkDB($shop);
-
-			if ($newOrderExists)
-			{
-				// Update ref table with new id
-				$updateSuccessful = self::updateDB($shop);
-
-				if ($updateSuccessful)
-				{
-					// Alert notify
-					self::notify($shop);
+					if ($updateSuccessful)
+					{
+						// Alert notify
+						self::notify($shop);
+					}
 				}
 			}
 		}
 
 		return true;
 	}
-
 
 	/**
 	 * Check if a table exists in the database.
@@ -204,33 +154,94 @@ class PlgBehaviourChirp extends CMSPlugin implements SubscriberInterface
 	}
 
 	/**
-	 * Undocumented function
+	 * Builds Easy Shop event
 	 *
-	 * @param   string $name message
-	 * @return  string
+	 * @return  json string
 	 */
-	protected function buildEvent($name)
+	protected function buildEasyShopEvent()
 	{
-		$db = Factory::getContainer()->get('DatabaseDriver');
+
+		$db = Factory::getDbo();
+
 		$query = $db->getQuery(true);
-		$query = "SELECT * FROM `#__chirp_order_ref` WHERE name = '$name'";
+		$query = "SELECT * from `#__easyshop_order_products` ORDER BY order_id DESC LIMIT 1;";
 		$db->setQuery($query);
-		$row = $db->loadObjectList();
+		$product = $db->loadObjectList();
 
-		$str = "{name:'Debbie D.', location:'Dallas, TX', product:'Screwdriver', img_url: 'https://imgurl', product_url: 'https:produrl'}";
+		$orderId = (string) $product[0]->order_id;
 
-		return $str;
+		$query = $db->getQuery(true);
+		$query = "SELECT * from `#__easyshop_orders` t1, `#__users` t2 WHERE t1.id = '$orderId' AND t1.user_email = t2.email";
+		$db->setQuery($query);
+		$order = $db->loadObjectList();
+
+		$obj = new stdClass;
+		$obj->orderId = $product[0]->order_id;
+		$obj->email = $order[0]->email;
+		$obj->userName = $order[0]->name;
+		$obj->productName = $product[0]->product_name;
+
+		return json_encode($obj);
 	}
 
 	/**
-	 * Undocumented function
-	 * @param   string $message - It's a message?
-	 * @return  void
+	 * Builds EShop event
+	 *
+	 * @return  json string
 	 */
-	protected function notify($message)
+	protected function buildEShopEvent()
 	{
-		$contents = self::buildEvent($message);
+		return json_encode($obj);
+	}
 
-		file_put_contents("event.data", $contents, LOCK_EX);
+	/**
+	 * Builds Hikashop event
+	 *
+	 * @return  json string
+	 */
+	protected function buildHikaShopEvent()
+	{
+		return json_encode($obj);
+	}
+
+	/**
+	 * Builds Phocacart event
+	 *
+	 * @return  json string
+	 */
+	protected function buildPhocaCartEvent()
+	{
+		return json_encode($obj);
+	}
+
+	/**
+	 * Builds ntofication message to be sent to the front
+	 *
+	 * @param   string $refName - It's a message?
+	 * @return  void
+	 *
+	 */
+	protected function notify($refName)
+	{
+		// Define an associative array to map $refName to event builder methods
+		$eventBuilders = [
+			'eshop_orders' => 'buildEShopEvent',
+			'easyshop_orders' => 'buildEasyShopEvent',
+			'hikashop_order' => 'buildHikaShopEvent',
+			'phocacart_orders' => 'buildPhocaCartEvent',
+		];
+
+		// Check if $refName exists in the mapping array
+		if (isset($eventBuilders[$refName]))
+		{
+			// Get the corresponding event builder method name
+			$eventBuilderMethod = $eventBuilders[$refName];
+
+			// Call the event builder method
+			$contents = $this->$eventBuilderMethod();
+
+			// Write contents to the 'event.data' file
+			file_put_contents('plugins/behaviour/chirp/event.data', $contents, LOCK_EX);
+		}
 	}
 }

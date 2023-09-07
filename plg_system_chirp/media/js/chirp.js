@@ -14,20 +14,20 @@
         div.id = "chirp_nest";
         body.appendChild(div);
 
-        // async function getSettings() {
-        //     try {
-        //         const fetched = await fetch(
-        //             "/index.php?option=com_chirp&task=api.settings",
-        //             options
-        //         );
-        //         return await fetched.json();
-        //     } catch (e) {
-        //         // e for error - we'll need to try again later or load a backup config.
-        //         console.log(e);
-        //     }
-        // }
+        async function getSettings() {
+            try {
+                const fetched = await fetch(
+                    "/index.php?option=com_chirp&task=api.settings",
+                    options
+                );
+                return await fetched.json();
+            } catch (e) {
+                // e for error - we'll need to try again later or load a backup config.
+                console.log(e);
+            }
+        }
 
-        // getSettings().then((data) => (settings = data));
+        getSettings().then((data) => (settings = data));
 
         const eventSource = new EventSource(
             "/plugins/behaviour/chirp/event.php"
