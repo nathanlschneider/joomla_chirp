@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <config>
-  <fieldset label="COM_CHIRP" name="chirp">
+  <fieldset label="COM_CHIRP_SETTINGS" name="chirp">
     <field name="eshop" type="radio" buttons="true" layout="joomla.form.field.radio.switcher"
       default="0" label="COM_CHIRP_FORM_LBL_ESHOP" description="COM_CHIRP_FORM_DESC_ESHOP"
       hint="COM_CHIRP_FORM_LBL_ESHOP">
@@ -40,6 +40,19 @@
       <option value="7">Bottom Left</option>
       <option value="8">Center Left</option>
     </field>
+  
+    <field name="sound" type="radio" buttons="true" layout="joomla.form.field.radio.switcher"
+      default="0" label="COM_CHIRP_FORM_LBL_SOUND" description="COM_CHIRP_FORM_DESC_SOUND"
+      hint="COM_CHIRP_FORM_LBL_SOUND">
+      <option value="0">JNO</option>
+      <option value="1">JYES</option>
+    </field>
+    <field name="notificationsound" type="list" label="COM_CHIRP_FORM_LBL_NOTIFICATIONSOUND" description="COM_CHIRP_FORM_DESC_NOTIFICATIONSOUND">
+      <option value="692819__hollandm__woodblock-med">Wood Block</option>
+      <option value="28852__junggle__btn042">Chirp</option>
+    </field>
+    <field name="chirpshowlength" type="text" class="validate-numeric" default="10" label="COM_CHIRP_FORM_DESC_LBL" description="COM_CHIRP_FORM_DESC_LENGTH"
+size="10" />
   </fieldset>
 
   <fieldset name="permissions" description="JCONFIG_PERMISSIONS_DESC"

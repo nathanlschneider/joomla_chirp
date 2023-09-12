@@ -1,3 +1,45 @@
-#chirp {
-    color:red;
+@import url('https://fonts.googleapis.com/css2?family=Roboto&display=swap');
+
+div.chirp.showChirp {
+    opacity: 1;
+    transform: translateX(20px);
+}
+
+.chirp {
+    font-family: 'Roboto', sans-serif;
+    height: 100px;
+    width: 400px;
+    border-radius: 10px;
+    padding: 5px 0px;
+    border: 1px solid rgba(0, 0, 0, 0.22);
+    background: #fff;
+    box-shadow: 0px 10px 35px -15px rgba(0, 0, 0, 0.35);
+    position: absolute;
+    top: 20px;
+    transform: translateX(-380px);
+    opacity: 0;
+    transition: 0.5s all;
+    z-index: 99999999;
+    overflow: hidden;
+    display: grid;
+    grid-template-columns: 33% 1fr;
+    grid-template-rows: 1fr max-content;
+    cursor: pointer;
+    align-items: center;
+}
+
+#chirpProductImage {
+    grid-column: 1;
+    grid-row: 1 / span 2;
+}
+
+#chirpTopLine {
+    grid-column: 2;
+    grid-row: 1;
+}
+
+#chirpBottomLine {
+    grid-column: 2;
+    grid-row: 2;
+    font-size: 12px;
 }

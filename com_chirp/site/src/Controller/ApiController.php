@@ -12,14 +12,8 @@ namespace Chirp\Component\Chirp\Site\Controller;
 
 \defined('_JEXEC') or die;
 
-use Joomla\CMS\Component\ComponentHelper;
 use Joomla\CMS\Factory;
-use Joomla\CMS\Language\Text;
-use Joomla\CMS\MVC\Factory\MVCFactoryInterface;
-use Joomla\CMS\MVC\Model\BaseDatabaseModel;
-use Joomla\CMS\MVC\Controller\FormController;
 use Joomla\CMS\MVC\Controller\BaseController;
-
 
 /**
  * API Component Controller
@@ -42,7 +36,6 @@ class ApiController extends BaseController
 		return $model;
 	}
 
-
 	/**
 	 * Undocumented function
 	 *
@@ -59,15 +52,15 @@ class ApiController extends BaseController
 			header('Content-Type: application/json');
 			$response = array(
 				'status' => 'success',
-				// 'usergroups' => $params->get('usergroups'),
-				'minTime' => intval($params->get('mintime')),
-				'maxTime' => intval($params->get('maxtime')),
-				// "eshop" => intval($params->get('eshop')),
-				// "hikashop" => intval($params->get('hikashop')),
-				// "easyshop" => intval($params->get('easyshop')),
-				// "phocacart" => intval($params->get('phocacart')),
+				'usergroups' => $params->get('usergroups'),
+				"eshop" => intval($params->get('eshop')),
+				"hikashop" => intval($params->get('hikashop')),
+				"easyshop" => intval($params->get('easyshop')),
+				"phocacart" => intval($params->get('phocacart')),
 				"notificationlocation" => intval($params->get('notificationlocation')),
-				// "dummyitems" => intval($params->get('dummyitems')),
+				"sound" => intval($params->get('sound')),
+				"notificationsound" => $params->get('notificationsound'),
+				"chirpshowlength" => intval($params->get('chirpshowlength')),
 			);
 			echo json_encode($response);
 			die;

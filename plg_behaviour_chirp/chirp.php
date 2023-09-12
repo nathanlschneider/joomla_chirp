@@ -161,7 +161,7 @@ class PlgBehaviourChirp extends CMSPlugin implements SubscriberInterface
 	protected function buildEasyShopEvent()
 	{
 
-		$db = Factory::getDbo();
+		$db = Factory::getContainer()->get('DatabaseDriver');
 
 		$query = $db->getQuery(true);
 		$query = "SELECT * from `#__easyshop_order_products` ORDER BY order_id DESC LIMIT 1;";
@@ -169,9 +169,10 @@ class PlgBehaviourChirp extends CMSPlugin implements SubscriberInterface
 		$product = $db->loadObjectList();
 
 		$orderId = (string) $product[0]->order_id;
+		$productId = (string) $product[0]->product_id;
 
 		$query = $db->getQuery(true);
-		$query = "SELECT * from `#__easyshop_orders` t1, `#__users` t2 WHERE t1.id = '$orderId' AND t1.user_email = t2.email";
+		$query = "SELECT * from `#__easyshop_orders` t1, `#__users` t2, `#__easyshop_medias` t3, `#__easyshop_customfield_values` t4 WHERE t1.id = '$orderId' AND t4.reflector_id = '$orderId' AND t1.user_email = t2.email AND t3.product_id = $productId";
 		$db->setQuery($query);
 		$order = $db->loadObjectList();
 
@@ -179,7 +180,9 @@ class PlgBehaviourChirp extends CMSPlugin implements SubscriberInterface
 		$obj->orderId = $product[0]->order_id;
 		$obj->email = $order[0]->email;
 		$obj->userName = $order[0]->name;
+		$obj->userCity = $order[2]->value;
 		$obj->productName = $product[0]->product_name;
+		$obj->productImage = "media/com_easyshop/" . $order[0]->file_path;
 
 		return json_encode($obj);
 	}
@@ -191,6 +194,21 @@ class PlgBehaviourChirp extends CMSPlugin implements SubscriberInterface
 	 */
 	protected function buildEShopEvent()
 	{
+		$db = Factory::getContainer()->get('DatabaseDriver');
+
+		$query = $db->getQuery(true);
+		$query = "SELECT * from `#__eshop_orders` t1, `#__eshop_orderproducts` t2, `#__eshop_productimages` t3 WHERE t1.id = t2.order_id ORDER BY t1.id DESC LIMIT 1";
+		$db->setQuery($query);
+		$product = $db->loadObjectList();
+
+		$obj = new stdClass;
+		$obj->orderId = $product[0]->id;
+		$obj->email = $product[0]->email;
+		$obj->userName = $product[0]->firstname;
+		$obj->userCity = $product[0]->payment_city;
+		$obj->productName = $product[0]->product_name;
+		$obj->productImage = "media/com_eshop/" . $product[0]->image;
+
 		return json_encode($obj);
 	}
 

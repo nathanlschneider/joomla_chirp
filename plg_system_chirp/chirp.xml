@@ -16,6 +16,7 @@
   <media folder="media" destination="plg_system_chirp">
     <folder>js</folder>
     <folder>css</folder>
+    <folder>wav</folder>
   </media>
   <updateservers>
     <server type="extension" priority="1" name="plg_system_chirp">
