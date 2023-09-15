@@ -1,4 +1,4 @@
-@import url('https://fonts.googleapis.com/css2?family=Roboto&display=swap');
+@import url("https://fonts.googleapis.com/css2?family=Roboto&display=swap");
 
 div.chirp.showChirp {
     opacity: 1;
@@ -6,11 +6,11 @@ div.chirp.showChirp {
 }
 
 .chirp {
-    font-family: 'Roboto', sans-serif;
+    font-family: "Roboto", sans-serif;
     height: 100px;
     width: 400px;
     border-radius: 10px;
-    padding: 5px 0px;
+    padding: 5px 5px 5px 0px;
     border: 1px solid rgba(0, 0, 0, 0.22);
     background: #fff;
     box-shadow: 0px 10px 35px -15px rgba(0, 0, 0, 0.35);
@@ -26,11 +26,25 @@ div.chirp.showChirp {
     grid-template-rows: 1fr max-content;
     cursor: pointer;
     align-items: center;
+    column-gap: 10px;
 }
 
 #chirpProductImage {
+    height: 80px;
     grid-column: 1;
     grid-row: 1 / span 2;
+    /* background-image: url(/media/plg_system_chirp/image/bird.png);
+    background-size: contain;
+    background-repeat: no-repeat;
+    background-position: center; */
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+#chirpProductImage img {
+    max-height: 80px;
+    object-fit: cover;
 }
 
 #chirpTopLine {
@@ -42,4 +56,85 @@ div.chirp.showChirp {
     grid-column: 2;
     grid-row: 2;
     font-size: 12px;
+}
+
+:root {
+    --size: 20px; /* Any unit */
+    --background-color: #eaeaea; /* No gradients */
+    --border: 10px solid #0585e1; /* Set "none" if you don't want */
+}
+
+.wrapper {
+    width: var(--size);
+    height: var(--size);
+    position: absolute;
+    background: var(--background-color);
+    overflow: hidden;
+    right: 5px;
+    bottom: 5px;
+    border-radius: 40px;
+}
+
+.pie {
+    width: 50%;
+    height: 100%;
+    transform-origin: 100% 50%;
+    position: absolute;
+    background: var(--background-color);
+    border: var(--border);
+}
+
+.spinner {
+    border-radius: 100% 0 0 100% / 50% 0 0 50%;
+    z-index: 200;
+    border-right: none;
+    animation: rota var(--animation-duration) linear infinite;
+}
+
+.filler {
+    border-radius: 0 100% 100% 0 / 0 50% 50% 0;
+    left: 50%;
+    opacity: 0;
+    z-index: 100;
+    animation: fill var(--animation-duration) steps(1, end) infinite;
+    border-left: none;
+}
+
+.mask {
+    width: 50%;
+    height: 100%;
+    position: absolute;
+    background: inherit;
+    opacity: 1;
+    z-index: 300;
+    animation: mask var(--animation-duration) steps(1, end) infinite;
+}
+
+@keyframes rota {
+    0% {
+        transform: rotate(0deg);
+    }
+    100% {
+        transform: rotate(360deg);
+    }
+}
+
+@keyframes mask {
+    0% {
+        opacity: 1;
+    }
+    50%,
+    100% {
+        opacity: 0;
+    }
+}
+
+@keyframes fill {
+    0% {
+        opacity: 0;
+    }
+    50%,
+    100% {
+        opacity: 1;
+    }
 }

@@ -46,10 +46,45 @@
             const chirp = document.createElement("div");
             chirp.classList.add("chirp");
 
+            let userNameStr, locationStr, chirpMessage, aOrAn;
+
+            if (
+                typeof data.userName === "string" &&
+                data.userName.includes(" ")
+            ) {
+                userNameStr = data.userName.split(" ")[0];
+            } else {
+                userNameStr = data.userName;
+            }
+
+            if (typeof data.userCity !== "string") {
+                locationStr = "";
+            } else {
+                locationStr = ` from ${data.userCity}`;
+            }
+
+            if (
+                typeof data.productName === "string" &&
+                ["a", "e", "i", "o", "u"].some(
+                    (vowel) => data.productName[0] === vowel
+                )
+            ) {
+                aOrAn = "an";
+            } else {
+                aOrAn = "a";
+            }
+
+            chirpMessage = `${userNameStr}${locationStr} ordered ${aOrAn} <a href='${data.productLink}'><strong>${data.productName}</strong></a>!`;
+
             chirp.innerHTML = `
             <div id='chirpProductImage'><img src='${data.productImage}' alt='' /></div>
-            <div id='chirpTopLine'>${data.userName} from ${data.userCity} just ordered a <strong>${data.productName}</strong>!</div>
+            <div id='chirpTopLine'>${chirpMessage}</div>
             <div id='chirpBottomLine'>Just Now</div>
+            <div class="wrapper" style="--animation-duration: ${settings.chirpshowlength}s">
+            <div class="pie spinner"></div>
+            <div class="pie filler"></div>
+            <div class="mask"></div>
+            </div> 
             `;
 
             body.prepend(chirp);
@@ -67,7 +102,6 @@
 
             setTimeout(() => {
                 chirp.classList.remove("showChirp");
-                // chirp.innerHTML = "";
             }, settings.chirpshowlength * 1000);
         };
     });

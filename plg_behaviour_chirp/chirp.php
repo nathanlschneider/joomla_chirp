@@ -36,6 +36,7 @@ class PlgBehaviourChirp extends CMSPlugin implements SubscriberInterface
 	{
 		return [
 			'onTableAfterStore' => 'checkOrders',
+			'onTableAfterBind' => 'checkOrders',
 		];
 	}
 
@@ -86,6 +87,10 @@ class PlgBehaviourChirp extends CMSPlugin implements SubscriberInterface
 						// Alert notify
 						self::notify($shop);
 					}
+					else
+					{
+						error_log('update was not successful');
+					}
 				}
 			}
 		}
@@ -112,9 +117,17 @@ class PlgBehaviourChirp extends CMSPlugin implements SubscriberInterface
 		$db->setQuery($query);
 		$result = $db->loadResult();
 
-		$db = Factory::getContainer()->get('DatabaseDriver');
 		$query = $db->getQuery(true);
-		$query = "SELECT id FROM `#__$tableName` ORDER BY id DESC LIMIT 1";
+
+		if ($tableName == 'hikashop_order')
+		{
+			$query = "SELECT order_id FROM `#__$tableName` ORDER BY order_id DESC LIMIT 1";
+		}
+		else
+		{
+			$query = "SELECT id FROM `#__$tableName` ORDER BY id DESC LIMIT 1";
+		}
+
 		$db->setQuery($query);
 		$orderID = $db->loadResult();
 
@@ -141,7 +154,16 @@ class PlgBehaviourChirp extends CMSPlugin implements SubscriberInterface
 	{
 		$db = Factory::getContainer()->get('DatabaseDriver');
 		$query = $db->getQuery(true);
-		$query = "SELECT id FROM `#__$tableName` ORDER BY id DESC LIMIT 1";
+
+		if ($tableName == 'hikashop_order')
+		{
+			$query = "SELECT order_id FROM `#__$tableName` ORDER BY order_id DESC LIMIT 1";
+		}
+		else
+		{
+			$query = "SELECT id FROM `#__$tableName` ORDER BY id DESC LIMIT 1";
+		}
+
 		$db->setQuery($query);
 		$orderId = $db->loadResult();
 
@@ -160,9 +182,7 @@ class PlgBehaviourChirp extends CMSPlugin implements SubscriberInterface
 	 */
 	protected function buildEasyShopEvent()
 	{
-
 		$db = Factory::getContainer()->get('DatabaseDriver');
-
 		$query = $db->getQuery(true);
 		$query = "SELECT * from `#__easyshop_order_products` ORDER BY order_id DESC LIMIT 1;";
 		$db->setQuery($query);
@@ -172,7 +192,15 @@ class PlgBehaviourChirp extends CMSPlugin implements SubscriberInterface
 		$productId = (string) $product[0]->product_id;
 
 		$query = $db->getQuery(true);
-		$query = "SELECT * from `#__easyshop_orders` t1, `#__users` t2, `#__easyshop_medias` t3, `#__easyshop_customfield_values` t4 WHERE t1.id = '$orderId' AND t4.reflector_id = '$orderId' AND t1.user_email = t2.email AND t3.product_id = $productId";
+		$query = "SELECT * from `#__easyshop_orders` t1,
+								`#__users` t2,
+								`#__easyshop_medias` t3,
+								`#__easyshop_customfield_values` t4 
+								WHERE t1.id = '$orderId' 
+								AND t4.reflector_id = '$orderId'
+								AND t1.user_email = t2.email
+								AND t3.product_id = $productId
+								";
 		$db->setQuery($query);
 		$order = $db->loadObjectList();
 
@@ -195,9 +223,14 @@ class PlgBehaviourChirp extends CMSPlugin implements SubscriberInterface
 	protected function buildEShopEvent()
 	{
 		$db = Factory::getContainer()->get('DatabaseDriver');
-
 		$query = $db->getQuery(true);
-		$query = "SELECT * from `#__eshop_orders` t1, `#__eshop_orderproducts` t2, `#__eshop_productimages` t3 WHERE t1.id = t2.order_id ORDER BY t1.id DESC LIMIT 1";
+		$query = "SELECT * from `#__eshop_orders` t1,
+								`#__eshop_orderproducts` t2,
+								`#__eshop_productimages` t3 
+								WHERE t1.id = t2.order_id 
+								ORDER BY t1.id 
+								DESC LIMIT 1
+								";
 		$db->setQuery($query);
 		$product = $db->loadObjectList();
 
@@ -207,7 +240,15 @@ class PlgBehaviourChirp extends CMSPlugin implements SubscriberInterface
 		$obj->userName = $product[0]->firstname;
 		$obj->userCity = $product[0]->payment_city;
 		$obj->productName = $product[0]->product_name;
-		$obj->productImage = "media/com_eshop/" . $product[0]->image;
+
+		if (isset($product[0]->image))
+		{
+			$obj->productImage = "media/com_eshop/products/" . $product[0]->image;
+		}
+		else
+		{
+			$obj->productImage = "media/plg_system_chirp/image/bird.png";
+		}
 
 		return json_encode($obj);
 	}
@@ -219,6 +260,40 @@ class PlgBehaviourChirp extends CMSPlugin implements SubscriberInterface
 	 */
 	protected function buildHikaShopEvent()
 	{
+		$db = Factory::getContainer()->get('DatabaseDriver');
+		$query = $db->getQuery(true);
+		$query = "SELECT * FROM `#__hikashop_order` t1,
+								`#__hikashop_order_product` t2,
+								`#__hikashop_user` t3,
+								`#__users` t4,
+								`#__hikashop_file` t5
+								WHERE t1.order_id = t2.order_id
+								AND t1.order_user_id = t3.user_id
+								AND t3.user_cms_id = t4.id
+								AND t5.file_ref_id = t2.product_id
+								ORDER BY t1.order_id
+								DESC LIMIT 1
+								";
+		$db->setQuery($query);
+		$product = $db->loadObjectList();
+
+		$obj = new stdClass;
+		$obj->orderId = $product[0]->order_id;
+		$obj->email = $product[0]->email;
+		$obj->userName = $product[0]->name;
+		$obj->userCity = $product[0]->city ? $product[0]->city : null;
+		$obj->productName = $product[0]->order_product_name;
+		$obj->productLink = "index.php?option=com_hikashop&ctrl=product&task=updatecart&quantity=1&cid=" . $product[0]->product_id;
+
+		if (isset($product[0]->file_path))
+		{
+			$obj->productImage = "images/com_hikashop/upload/" . $product[0]->file_path;
+		}
+		else
+		{
+			$obj->productImage = "media/plg_system_chirp/image/bird.png";
+		}
+
 		return json_encode($obj);
 	}
 
@@ -229,6 +304,38 @@ class PlgBehaviourChirp extends CMSPlugin implements SubscriberInterface
 	 */
 	protected function buildPhocaCartEvent()
 	{
+		$db = Factory::getContainer()->get('DatabaseDriver');
+		$query = $db->getQuery(true);
+		$query = "SELECT * FROM `#__phocacart_orders` t1,
+								`#__phocacart_order_products` t2,
+								`#__phocacart_order_users` t3,
+								`#__phocacart_products` t4
+								WHERE t1.id = t2.order_id 
+								AND t2.product_id = t4.id 
+								AND t2.order_id = t3.order_id 
+								AND t3.type = 0 
+								ORDER BY t1.id 
+								DESC LIMIT 1; 
+								";
+		$db->setQuery($query);
+		$product = $db->loadObjectList();
+
+		$obj = new stdClass;
+		$obj->orderId = $product[0]->id;
+		$obj->email = $product[0]->email;
+		$obj->userName = $product[0]->name_first;
+		$obj->userCity = $product[0]->city;
+		$obj->productName = $product[0]->title;
+
+		if (isset($product[0]->image))
+		{
+			$obj->productImage = "images/phocacartproducts/" . $product[0]->image;
+		}
+		else
+		{
+			$obj->productImage = "media/plg_system_chirp/image/bird.png";
+		}
+
 		return json_encode($obj);
 	}
 
@@ -257,6 +364,9 @@ class PlgBehaviourChirp extends CMSPlugin implements SubscriberInterface
 
 			// Call the event builder method
 			$contents = $this->$eventBuilderMethod();
+
+			// Check if working path was changed and sets it back to Joomla's root
+			getcwd() !== JPATH_ROOT ? chdir(JPATH_ROOT) : null;
 
 			// Write contents to the 'event.data' file
 			file_put_contents('plugins/behaviour/chirp/event.data', $contents, LOCK_EX);
