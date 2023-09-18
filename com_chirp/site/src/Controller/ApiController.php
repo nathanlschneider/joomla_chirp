@@ -14,6 +14,7 @@ namespace Chirp\Component\Chirp\Site\Controller;
 
 use Joomla\CMS\Factory;
 use Joomla\CMS\MVC\Controller\BaseController;
+use Joomla\CMS\Input\Json;
 
 /**
  * API Component Controller
@@ -37,6 +38,40 @@ class ApiController extends BaseController
 	}
 
 	/**
+	 * track - Receives click data from Chirp
+	 *
+	 * @return void
+	 */
+	public function track()
+	{
+		$jsonInput = new Json;
+
+		$jsonData = $jsonInput->getRaw();
+
+		if (!empty($jsonData))
+		{
+			// Parse the JSON data
+			$parsedData = json_decode($jsonData);
+
+			if ($parsedData !== null)
+			{
+				$response = self::apiModel()->track($parsedData);
+				echo $response;
+			}
+			else
+			{
+				echo "Failed to parse JSON data.";
+			}
+		}
+		else
+		{
+			echo "No JSON data found in the POST request.";
+		}
+
+		die;
+	}
+
+	/**
 	 * Undocumented function
 	 *
 	 * @return void
@@ -57,7 +92,7 @@ class ApiController extends BaseController
 				"hikashop" => intval($params->get('hikashop')),
 				"easyshop" => intval($params->get('easyshop')),
 				"phocacart" => intval($params->get('phocacart')),
-				"notificationlocation" => intval($params->get('notificationlocation')),
+				"notificationlocation" => $params->get('notificationlocation'),
 				"sound" => intval($params->get('sound')),
 				"notificationsound" => $params->get('notificationsound'),
 				"chirpshowlength" => intval($params->get('chirpshowlength')),
@@ -71,33 +106,6 @@ class ApiController extends BaseController
 			http_response_code(500);
 			header('Content-Type: application/json');
 			$response = array('status' => 'failed', 'message' => 'An error has occoured.');
-			echo json_encode($response);
-			die;
-		}
-	}
-
-	/**
-	 * Undocumented function
-	 *
-	 * @return void
-	 */
-	public function name()
-	{
-		$name = self::apiModel()->buildName();
-
-		if ($name)
-		{
-			http_response_code(200);
-			header('Content-Type: application/json');
-			$response = array('status' => 'success', 'name' => $name);
-			echo json_encode($response);
-			die;
-		}
-		else
-		{
-			http_response_code(500);
-			header('Content-Type: application/json');
-			$response = array('status' => 'failed', 'message' => 'An error occoured.');
 			echo json_encode($response);
 			die;
 		}

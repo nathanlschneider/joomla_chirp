@@ -1,6 +1,5 @@
 CREATE TABLE IF NOT EXISTS `#__chirp_control` (
 `id` int(11) UNSIGNED NOT NULL AUTO_INCREMENT,
-
 `state` TINYINT(1)  NULL  DEFAULT 1,
 `ordering` INT(11)  NULL  DEFAULT 0,
 `checked_out` INT(11)  UNSIGNED,
@@ -8,6 +7,16 @@ CREATE TABLE IF NOT EXISTS `#__chirp_control` (
 `key` VARCHAR(255)  NOT NULL ,
 PRIMARY KEY (`id`)
 ) DEFAULT COLLATE=utf8mb4_unicode_ci;
+
+CREATE TABLE `#__chirp_analytics` (
+  `id` int(11) unsigned NOT NULL AUTO_INCREMENT,
+  `uniq_id` varchar(36) DEFAULT NULL,
+  `product_id` int(11) NOT NULL,
+  `click_date` timestamp NOT NULL DEFAULT current_timestamp(),
+  `shop_name` varchar(20) NOT NULL,
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `uniq_id` (`uniq_id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci
 
  CREATE TABLE IF NOT EXISTS `#__chirp_order_ref` (
   `id` int(11) UNSIGNED NOT NULL AUTO_INCREMENT,

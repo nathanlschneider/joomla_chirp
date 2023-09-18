@@ -31,14 +31,14 @@
     <field name="notificationlocation" type="list" label="COM_CHIRP_FORM_LBL_NOTIFICATIONLOCATION"
       description="COM_CHIRP_FORM_DESC_NOTIFICATIONLOCATION"
       hint="COM_CHIRP_FORM_LBL_NOTIFICATIONLOCATION">
-      <option value="1">Top Left</option>
-      <option value="2">Top Center</option>
-      <option value="3">Top Right</option>
-      <option value="4">Center Right</option>
-      <option value="5">Bottom Right</option>
-      <option value="6">Bottom Center</option>
-      <option value="7">Bottom Left</option>
-      <option value="8">Center Left</option>
+      <option value="top-left">Top Left</option>
+      <option value="top-center">Top Center</option>
+      <option value="top-right">Top Right</option>
+      <option value="center-right">Center Right</option>
+      <option value="bottom-right">Bottom Right</option>
+      <option value="bottom-center">Bottom Center</option>
+      <option value="bottom-left">Bottom Left</option>
+      <option value="center-left">Center Left</option>
     </field>
   
     <field name="sound" type="radio" buttons="true" layout="joomla.form.field.radio.switcher"

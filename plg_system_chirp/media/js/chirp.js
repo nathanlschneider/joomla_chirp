@@ -23,7 +23,9 @@
             }
         }
 
-        getSettings().then((data) => (settings = data));
+        getSettings().then((data) => {
+            settings = data;
+        });
 
         const eventSource = new EventSource(
             "/plugins/behaviour/chirp/event.php"
@@ -38,15 +40,99 @@
             lastevent = e.type;
         });
 
+        const generateUniqueID = () => {
+            const timestamp = Date.now().toString(36); // Convert current timestamp to base36
+            const randomString = Math.random().toString(36).substring(2, 15); // Generate a random string
+
+            return timestamp + randomString;
+        };
+
+        const trackClick = (returnData, uid) => {
+            if (typeof returnData === "object" && typeof uid === "string") {
+                
+                const postData = {
+                    returnData: returnData,
+                    uniqId: uid,
+                };
+
+                const options = {
+                    method: "POST",
+                    headers: {
+                        "Content-Type": "application/json",
+                    },
+                    body: JSON.stringify(postData),
+                };
+
+                try {
+                    fetch(
+                        "/index.php?option=com_chirp&task=api.track",
+                        options
+                    );
+                } catch (e) {
+                    console.error(e);
+                }
+            }
+        };
+
         const showChirp = (data) => {
             const alertSound = new Audio(
                 `/media/plg_system_chirp/wav/${settings.notificationsound}.wav`
             );
+            let userNameStr, locationStr, chirpMessage, aOrAn;
 
             const chirp = document.createElement("div");
             chirp.classList.add("chirp");
 
-            let userNameStr, locationStr, chirpMessage, aOrAn;
+            const setChirpLocation = () => {
+                chirp.style.left = "unset";
+                chirp.style.right = "unset";
+                chirp.style.top = "unset";
+                chirp.style.bottom = "unset";
+                switch (settings.notificationlocation) {
+                    case "top-left":
+                        chirp.style.top = "20px";
+                        chirp.style.left = "20px";
+                        break;
+                    case "top-center":
+                        chirp.style.top = "20px";
+                        chirp.style.left = `calc(50vw - ${
+                            chirp.getBoundingClientRect().width / 2
+                        }px)`;
+                        break;
+                    case "top-right":
+                        chirp.style.top = "20px";
+                        chirp.style.right = "20px";
+                        break;
+                    case "center-right":
+                        chirp.style.top = `${
+                            window.innerHeight / 2 -
+                            chirp.getBoundingClientRect().height / 2
+                        }px`;
+                        chirp.style.right = "20px";
+                        break;
+                    case "bottom-right":
+                        chirp.style.bottom = "20px";
+                        chirp.style.right = "20px";
+                        break;
+                    case "bottom-center":
+                        chirp.style.bottom = "20px";
+                        chirp.style.left = `calc(50vw - ${
+                            chirp.getBoundingClientRect().width / 2
+                        }px)`;
+                        break;
+                    case "bottom-left":
+                        chirp.style.left = "20px";
+                        chirp.style.bottom = "20px";
+                        break;
+                    case "center-left":
+                        chirp.style.top = `${
+                            window.innerHeight / 2 -
+                            chirp.getBoundingClientRect().height / 2
+                        }px`;
+                        chirp.style.left = "20px";
+                        break;
+                }
+            };
 
             if (
                 typeof data.userName === "string" &&
@@ -91,9 +177,11 @@
 
             chirp.addEventListener("click", () => {
                 chirp.classList.remove("showChirp");
+                trackClick(data, generateUniqueID());
             });
-
+            // settings.notificationlocation.split(":")[0]
             setTimeout(() => {
+                setChirpLocation();
                 chirp.classList.add("showChirp");
                 if (settings.sound) alertSound.play();
                 // https://freesound.org/people/hollandm/sounds/692819/

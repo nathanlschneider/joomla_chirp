@@ -14,8 +14,4 @@
     <filename plugin="chirp">chirp.php</filename>
     <filename plugin="chirp">event.php</filename>
   </files>
-  <updateservers>
-    <server type="extension" priority="1" name="plg_behaviour_chirp">
-      https://qrkbl.com/joomla/chirp/plg_behaviour_chirp_update.xml</server>
-  </updateservers>
 </extension>

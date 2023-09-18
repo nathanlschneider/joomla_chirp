@@ -178,9 +178,11 @@ class PlgBehaviourChirp extends CMSPlugin implements SubscriberInterface
 	/**
 	 * Builds Easy Shop event
 	 *
-	 * @return  json string
+	 * @param	string $refName - Name of shop extension
+	 *
+	 * @return  string Stringified json object
 	 */
-	protected function buildEasyShopEvent()
+	protected function buildEasyShopEvent($refName)
 	{
 		$db = Factory::getContainer()->get('DatabaseDriver');
 		$query = $db->getQuery(true);
@@ -205,6 +207,7 @@ class PlgBehaviourChirp extends CMSPlugin implements SubscriberInterface
 		$order = $db->loadObjectList();
 
 		$obj = new stdClass;
+		$obj->shop = $refName;
 		$obj->orderId = $product[0]->order_id;
 		$obj->email = $order[0]->email;
 		$obj->userName = $order[0]->name;
@@ -218,9 +221,11 @@ class PlgBehaviourChirp extends CMSPlugin implements SubscriberInterface
 	/**
 	 * Builds EShop event
 	 *
-	 * @return  json string
+	 * @param	string $refName - Name of shop extension
+	 *
+	 * @return  string Stringified json object
 	 */
-	protected function buildEShopEvent()
+	protected function buildEShopEvent($refName)
 	{
 		$db = Factory::getContainer()->get('DatabaseDriver');
 		$query = $db->getQuery(true);
@@ -235,6 +240,7 @@ class PlgBehaviourChirp extends CMSPlugin implements SubscriberInterface
 		$product = $db->loadObjectList();
 
 		$obj = new stdClass;
+		$obj->shop = $refName;
 		$obj->orderId = $product[0]->id;
 		$obj->email = $product[0]->email;
 		$obj->userName = $product[0]->firstname;
@@ -256,9 +262,11 @@ class PlgBehaviourChirp extends CMSPlugin implements SubscriberInterface
 	/**
 	 * Builds Hikashop event
 	 *
-	 * @return  json string
+	 * @param	string $refName - Name of shop extension
+	 *
+	 * @return  string Stringified json object
 	 */
-	protected function buildHikaShopEvent()
+	protected function buildHikaShopEvent($refName)
 	{
 		$db = Factory::getContainer()->get('DatabaseDriver');
 		$query = $db->getQuery(true);
@@ -278,10 +286,11 @@ class PlgBehaviourChirp extends CMSPlugin implements SubscriberInterface
 		$product = $db->loadObjectList();
 
 		$obj = new stdClass;
+		$obj->shop = $refName;
 		$obj->orderId = $product[0]->order_id;
 		$obj->email = $product[0]->email;
 		$obj->userName = $product[0]->name;
-		$obj->userCity = $product[0]->city ? $product[0]->city : null;
+		$obj->userCity = isset($product[0]->city) ? $product[0]->city : null;
 		$obj->productName = $product[0]->order_product_name;
 		$obj->productLink = "index.php?option=com_hikashop&ctrl=product&task=updatecart&quantity=1&cid=" . $product[0]->product_id;
 
@@ -300,9 +309,11 @@ class PlgBehaviourChirp extends CMSPlugin implements SubscriberInterface
 	/**
 	 * Builds Phocacart event
 	 *
-	 * @return  json string
+	 * @param	string $refName - Name of shop extension
+	 *
+	 * @return  string Stringified json object
 	 */
-	protected function buildPhocaCartEvent()
+	protected function buildPhocaCartEvent($refName)
 	{
 		$db = Factory::getContainer()->get('DatabaseDriver');
 		$query = $db->getQuery(true);
@@ -321,6 +332,7 @@ class PlgBehaviourChirp extends CMSPlugin implements SubscriberInterface
 		$product = $db->loadObjectList();
 
 		$obj = new stdClass;
+		$obj->shop = $refName;
 		$obj->orderId = $product[0]->id;
 		$obj->email = $product[0]->email;
 		$obj->userName = $product[0]->name_first;
@@ -363,7 +375,7 @@ class PlgBehaviourChirp extends CMSPlugin implements SubscriberInterface
 			$eventBuilderMethod = $eventBuilders[$refName];
 
 			// Call the event builder method
-			$contents = $this->$eventBuilderMethod();
+			$contents = $this->$eventBuilderMethod($refName);
 
 			// Check if working path was changed and sets it back to Joomla's root
 			getcwd() !== JPATH_ROOT ? chdir(JPATH_ROOT) : null;
