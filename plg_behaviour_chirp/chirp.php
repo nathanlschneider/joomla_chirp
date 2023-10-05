@@ -9,7 +9,6 @@
 defined('_JEXEC') or die;
 
 use Joomla\CMS\Plugin\CMSPlugin;
-use Joomla\Event\Event;
 use Joomla\Event\SubscriberInterface;
 use Joomla\CMS\Factory;
 
@@ -36,62 +35,55 @@ class PlgBehaviourChirp extends CMSPlugin implements SubscriberInterface
 	{
 		return [
 			'onTableAfterStore' => 'checkOrders',
-			'onTableAfterBind' => 'checkOrders',
+			'onTableAfterBind' => 'checkOrders'
 		];
 	}
 
 	/**
-	 * InsertCode function
+	 * Check orders and perform actions if needed.
 	 *
-	 * @param   Event $event I have no idea what the linter wants from me.
-	 * @return  boolean
+	 * @return boolean True if successful, false otherwise.
 	 */
-	public function checkOrders(Event $event)
+	public function checkOrders()
 	{
-
+		// Check if the application is running on the site client
 		if (!\Joomla\CMS\Factory::getApplication()->isClient('site'))
 		{
 			return false;
 		}
 
-		$document = Factory::getApplication()->getDocument();
+		// Get the current document
+		$document = \Joomla\CMS\Factory::getApplication()->getDocument();
 
+		// Check if the document is an HtmlDocument
 		if (!($document instanceof \Joomla\CMS\Document\HtmlDocument))
 		{
 			return false;
 		}
 
-		$app = Factory::getApplication();
+		// Get the application
+		$app = \Joomla\CMS\Factory::getApplication();
+
+		// Get the parameters
 		$params = $app->getParams('com_chirp');
+		$shop = $params->get('shops', '');
 
-		$ecommerceSystems = [
-			'eshop' => 'eshop_orders',
-			'easyshop' => 'easyshop_orders',
-			'hikashop' => 'hikashop_order',
-			'phocacart' => 'phocacart_orders',
-		];
+		// Check the database for new orders
+		$newOrderId = self::checkDB($shop);
 
-		foreach ($ecommerceSystems as $system => $shop)
+		if ($newOrderId)
 		{
-			if ($params->get($system, 0))
+			// Update the reference table with the new ID
+			$updateSuccessful = self::updateDB($newOrderId, $shop);
+
+			if ($updateSuccessful)
 			{
-				$newOrderExists = self::checkDB($shop);
-
-				if ($newOrderExists)
-				{
-					// Update ref table with new id
-					$updateSuccessful = self::updateDB($shop);
-
-					if ($updateSuccessful)
-					{
-						// Alert notify
-						self::notify($shop);
-					}
-					else
-					{
-						error_log('update was not successful');
-					}
-				}
+				// Notify about the new order
+				self::notify($newOrderId, $shop);
+			}
+			else
+			{
+				error_log('Update was not successful');
 			}
 		}
 
@@ -103,42 +95,49 @@ class PlgBehaviourChirp extends CMSPlugin implements SubscriberInterface
 	 *
 	 * This function checks if a table with the given name exists in the database.
 	 *
-	 * @param   string $tableName The name of the table to check.
+	 * @param   string $shopName The name of the shop to check.
 	 *
-	 * @return string|false The name of the table if it exists, or false if not found.
+	 * @return  string|false The name of the table if it exists, or false if not found.
 	 */
-	protected function checkDB($tableName)
+	protected function checkDB($shopName)
 	{
+		// Get the database driver
 		$db = Factory::getContainer()->get('DatabaseDriver');
-		$query = $db->getQuery(true);
-		$query->select('order_id');
-		$query->from($db->quoteName('#__chirp_order_ref'));
-		$query->where($db->quoteName('table_name') . ' = ' . $db->quote($tableName));
+
+		// Build the first query to retrieve information from #__chirp_order_ref
+		$query = $db->getQuery(true)
+			->select(['order_id', 'column_id', 'table_name'])
+			->from($db->quoteName('#__chirp_order_ref'))
+			->where($db->quoteName('shop_name') . ' = ' . $db->quote($shopName));
+
+		// Execute the query
 		$db->setQuery($query);
-		$result = $db->loadResult();
+		$results = $db->loadObjectList();
 
-		$query = $db->getQuery(true);
+		if (!empty($results))
+		{
+			$refID = $results[0]->order_id;
+			$columnID = $results[0]->column_id;
+			$tableName = $results[0]->table_name;
 
-		if ($tableName == 'hikashop_order')
-		{
-			$query = "SELECT order_id FROM `#__$tableName` ORDER BY order_id DESC LIMIT 1";
-		}
-		else
-		{
-			$query = "SELECT id FROM `#__$tableName` ORDER BY id DESC LIMIT 1";
+			// Build the second query to retrieve the latest order ID from the specified table
+			$query = $db->getQuery(true)
+				->select($db->quoteName($columnID))
+				->from($db->quoteName('#__' . $tableName))
+				->order($db->quoteName($columnID) . ' DESC')
+				->setMaxResults(1);
+
+			// Execute the second query
+			$db->setQuery($query);
+			$orderID = $db->loadResult();
+
+			if ($orderID > $refID)
+			{
+				return $orderID;
+			}
 		}
 
-		$db->setQuery($query);
-		$orderID = $db->loadResult();
-
-		if ($orderID > $result)
-		{
-			return true;
-		}
-		else
-		{
-			return false;
-		}
+		return false;
 	}
 
 	/**
@@ -146,29 +145,24 @@ class PlgBehaviourChirp extends CMSPlugin implements SubscriberInterface
 	 *
 	 * This function updates data in the specified database table.
 	 *
-	 * @param   string $tableName The name of the table to update data in.
+	 * @param   string $orderId   The ID of the new order.
+	 * @param   string $shopName  The name of the shop.
 	 *
-	 * @return  boolean $result The result of db write.
+	 * @return  boolean True if the update was successful, false otherwise.
 	 */
-	protected function updateDB($tableName)
+	protected function updateDB($orderId, $shopName)
 	{
-		$db = Factory::getContainer()->get('DatabaseDriver');
+		$db = \Joomla\CMS\Factory::getDatabaseDriver();
+
+		// Create a query builder instance
 		$query = $db->getQuery(true);
 
-		if ($tableName == 'hikashop_order')
-		{
-			$query = "SELECT order_id FROM `#__$tableName` ORDER BY order_id DESC LIMIT 1";
-		}
-		else
-		{
-			$query = "SELECT id FROM `#__$tableName` ORDER BY id DESC LIMIT 1";
-		}
+		// Update the #__chirp_order_ref table
+		$query->update($db->quoteName('#__chirp_order_ref'))
+			->set($db->quoteName('order_id') . ' = ' . $db->quote($orderId))
+			->where($db->quoteName('shop_name') . ' = ' . $db->quote($shopName));
 
-		$db->setQuery($query);
-		$orderId = $db->loadResult();
-
-		$query = $db->getQuery(true);
-		$query = "UPDATE `#__chirp_order_ref` SET order_id = $orderId WHERE table_name = '$tableName'";
+		// Set the query and execute it
 		$db->setQuery($query);
 		$result = $db->execute();
 
@@ -186,7 +180,7 @@ class PlgBehaviourChirp extends CMSPlugin implements SubscriberInterface
 	{
 		$db = Factory::getContainer()->get('DatabaseDriver');
 		$query = $db->getQuery(true);
-		$query = "SELECT * from `#__easyshop_order_products` ORDER BY order_id DESC LIMIT 1;";
+		$query = "SELECT * from `#__easyshop_order_products` ORDER BY order_id DESC LIMIT 1";
 		$db->setQuery($query);
 		$product = $db->loadObjectList();
 
@@ -209,11 +203,11 @@ class PlgBehaviourChirp extends CMSPlugin implements SubscriberInterface
 		$obj = new stdClass;
 		$obj->shop = $refName;
 		$obj->orderId = $product[0]->order_id;
-		$obj->email = $order[0]->email;
 		$obj->userName = $order[0]->name;
 		$obj->userCity = $order[2]->value;
 		$obj->productName = $product[0]->product_name;
 		$obj->productImage = "media/com_easyshop/" . $order[0]->file_path;
+		$obj->productLink = "index.php?option=com_easyshop&view=productdetail&id=" . $productId;
 
 		return json_encode($obj);
 	}
@@ -221,40 +215,39 @@ class PlgBehaviourChirp extends CMSPlugin implements SubscriberInterface
 	/**
 	 * Builds EShop event
 	 *
+	 * @param   string $orderId - order
 	 * @param	string $refName - Name of shop extension
 	 *
 	 * @return  string Stringified json object
 	 */
-	protected function buildEShopEvent($refName)
+	protected function buildEShopEvent($orderId, $refName)
 	{
+
+		// Get the database driver
 		$db = Factory::getContainer()->get('DatabaseDriver');
-		$query = $db->getQuery(true);
-		$query = "SELECT * from `#__eshop_orders` t1,
-								`#__eshop_orderproducts` t2,
-								`#__eshop_productimages` t3 
-								WHERE t1.id = t2.order_id 
-								ORDER BY t1.id 
-								DESC LIMIT 1
-								";
+
+		// Build the database query
+		$query = $db->getQuery(true)
+			->select('t1.firstname, t1.payment_city, t2.product_name, t3.product_image')
+			->from($db->quoteName('#__eshop_orders', 't1'))
+			->innerJoin($db->quoteName('#__eshop_orderproducts', 't2') . ' ON t1.id = t2.order_id')
+			->innerJoin($db->quoteName('#__eshop_products', 't3') . ' ON t2.product_id = t3.id')
+			->where($db->quoteName('t1.id') . ' = ' . $db->quote($orderId));
+
+		// Execute the query
 		$db->setQuery($query);
 		$product = $db->loadObjectList();
 
+		// Create the response object
 		$obj = new stdClass;
 		$obj->shop = $refName;
-		$obj->orderId = $product[0]->id;
-		$obj->email = $product[0]->email;
+		$obj->orderId = $orderId;
 		$obj->userName = $product[0]->firstname;
 		$obj->userCity = $product[0]->payment_city;
 		$obj->productName = $product[0]->product_name;
-
-		if (isset($product[0]->image))
-		{
-			$obj->productImage = "media/com_eshop/products/" . $product[0]->image;
-		}
-		else
-		{
-			$obj->productImage = "media/plg_system_chirp/image/bird.png";
-		}
+		$obj->productImage = isset($product[0]->product_image) ?
+			"media/com_eshop/products/" . $product[0]->product_image :
+			"media/plg_system_chirp/image/bird.png";
 
 		return json_encode($obj);
 	}
@@ -288,7 +281,6 @@ class PlgBehaviourChirp extends CMSPlugin implements SubscriberInterface
 		$obj = new stdClass;
 		$obj->shop = $refName;
 		$obj->orderId = $product[0]->order_id;
-		$obj->email = $product[0]->email;
 		$obj->userName = $product[0]->name;
 		$obj->userCity = isset($product[0]->city) ? $product[0]->city : null;
 		$obj->productName = $product[0]->order_product_name;
@@ -334,7 +326,6 @@ class PlgBehaviourChirp extends CMSPlugin implements SubscriberInterface
 		$obj = new stdClass;
 		$obj->shop = $refName;
 		$obj->orderId = $product[0]->id;
-		$obj->email = $product[0]->email;
 		$obj->userName = $product[0]->name_first;
 		$obj->userCity = $product[0]->city;
 		$obj->productName = $product[0]->title;
@@ -354,18 +345,19 @@ class PlgBehaviourChirp extends CMSPlugin implements SubscriberInterface
 	/**
 	 * Builds ntofication message to be sent to the front
 	 *
+	 * @param   string $orderId order id
 	 * @param   string $refName - It's a message?
 	 * @return  void
 	 *
 	 */
-	protected function notify($refName)
+	protected function notify($orderId, $refName)
 	{
 		// Define an associative array to map $refName to event builder methods
 		$eventBuilders = [
-			'eshop_orders' => 'buildEShopEvent',
-			'easyshop_orders' => 'buildEasyShopEvent',
-			'hikashop_order' => 'buildHikaShopEvent',
-			'phocacart_orders' => 'buildPhocaCartEvent',
+			'eshop' => 'buildEShopEvent',
+			'easyshop' => 'buildEasyShopEvent',
+			'hikashop' => 'buildHikaShopEvent',
+			'phocacart' => 'buildPhocaCartEvent',
 		];
 
 		// Check if $refName exists in the mapping array
@@ -375,7 +367,7 @@ class PlgBehaviourChirp extends CMSPlugin implements SubscriberInterface
 			$eventBuilderMethod = $eventBuilders[$refName];
 
 			// Call the event builder method
-			$contents = $this->$eventBuilderMethod($refName);
+			$contents = $this->$eventBuilderMethod($orderId, $refName);
 
 			// Check if working path was changed and sets it back to Joomla's root
 			getcwd() !== JPATH_ROOT ? chdir(JPATH_ROOT) : null;

@@ -47,7 +47,6 @@ class NestedparentField extends ListField
 			->select('DISTINCT(a.id) AS value, a.title AS text, a.level, a.lft')
 			->from($table . ' AS a');
 
-
 		// Prevent parenting to children of this item.
 		if ($id = $this->form->getValue('id'))
 		{

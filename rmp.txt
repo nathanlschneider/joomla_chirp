@@ -1,0 +1,13 @@
+PHP message: 46 46
+PHP message: 46 46
+PHP message: 46 46', referer: https://j4.ultraweb.systems/index.php?option=com_eshop&view=checkout&Itemid=1087
+PHP message: 46 46
+PHP message: 46 46
+PHP message: 46 46
+PHP message: 47 46
+PHP message: updating ref to 47
+PHP message: building alert with id...46
+PHP message: Array\n(\n    [0] => stdClass Object\n        (\n            [id] => 1\n            [order_number] => SOXBQDDCUN\n            [invoice_number] => 46\n            [customer_id] => 468\n            [customergroup_id] => 1\n            [firstname] => Nathan\n            [lastname] => Schneider\n            [email] => n.l.schneider@gmail.com\n            [telephone] => 6168039803\n            [fax] => \n            [payment_firstname] => Nathan\n            [payment_lastname] => Schneider\n            [payment_email] => n.l.schneider@gmail.com\n            [payment_telephone] => 6168039803\n            [payment_fax] => \n            [payment_company] => \n            [payment_company_id] => \n            [payment_address_1] => 22 Brookmeadow North Ln SW\n            [payment_address_2] => Apt 3\n            [payment_city] => Grandville\n            [payment_postcode] => 49418\n            [payment_country_name] => United States\n            [payment_country_id] => 223\n            [payment_zone_name] => Michigan\n          ...PHP message: 47 47PHP message: 47 47PHP message: 47 47PHP message: 47 47PHP message: 47 47PHP message: 47 47PHP message: 47 47PHP message: 47 47PHP message: 47 47', referer: https://j4.ultraweb.systems/index.php?option=com_eshop&view=checkout&Itemid=1087
+PHP message: 47 47PHP message: 47 47', referer: https://j4.ultraweb.systems/index.php?option=com_eshop&view=checkout&Itemid=1087
+PHP message: 47 47', referer: https://j4.ultraweb.systems/index.php?option=com_eshop&view=checkout&Itemid=1087
+PHP message: 47 47PHP message: 47 47PHP message: 47 47', referer: https://j4.ultraweb.systems/index.php?option=com_eshop&amp;view=checkout&amp;Itemid=1087&amp;layout=complete

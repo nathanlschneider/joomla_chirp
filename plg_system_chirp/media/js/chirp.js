@@ -30,14 +30,9 @@
         const eventSource = new EventSource(
             "/plugins/behaviour/chirp/event.php"
         );
-        let lastevent;
 
         eventSource.addEventListener("alert", (e) => {
-            if (lastevent !== e.type) {
-                console.log(e);
-                showChirp(JSON.parse(e.data));
-            }
-            lastevent = e.type;
+            showChirp(JSON.parse(e.data));
         });
 
         const generateUniqueID = () => {
@@ -49,7 +44,6 @@
 
         const trackClick = (returnData, uid) => {
             if (typeof returnData === "object" && typeof uid === "string") {
-                
                 const postData = {
                     returnData: returnData,
                     uniqId: uid,
@@ -75,13 +69,20 @@
         };
 
         const showChirp = (data) => {
+            console.log(data);
             const alertSound = new Audio(
                 `/media/plg_system_chirp/wav/${settings.notificationsound}.wav`
             );
+
             let userNameStr, locationStr, chirpMessage, aOrAn;
 
-            const chirp = document.createElement("div");
-            chirp.classList.add("chirp");
+            let chirp = document.querySelector(".chirp");
+
+            if (chirp === null) {
+                chirp = document.createElement("div");
+                chirp.classList.add("chirp");
+                body.prepend(chirp);
+            }
 
             const setChirpLocation = () => {
                 chirp.style.left = "unset";
@@ -172,8 +173,6 @@
             <div class="mask"></div>
             </div> 
             `;
-
-            body.prepend(chirp);
 
             chirp.addEventListener("click", () => {
                 chirp.classList.remove("showChirp");

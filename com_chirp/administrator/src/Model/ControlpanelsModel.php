@@ -1,4 +1,5 @@
 <?php
+
 /**
  * @version    CVS: 0.1.0
  * @package    Com_Chirp
@@ -8,17 +9,13 @@
  */
 
 namespace Chirp\Component\Chirp\Administrator\Model;
+
 // No direct access.
 defined('_JEXEC') or die;
 
 use \Joomla\CMS\MVC\Model\ListModel;
 use \Joomla\Component\Fields\Administrator\Helper\FieldsHelper;
 use \Joomla\CMS\Factory;
-use \Joomla\CMS\Language\Text;
-use \Joomla\CMS\Helper\TagsHelper;
-use \Joomla\Database\ParameterType;
-use \Joomla\Utilities\ArrayHelper;
-use Chirp\Component\Chirp\Administrator\Helper\ChirpHelper;
 
 /**
  * Methods supporting a list of Controlpanels records.
@@ -27,14 +24,6 @@ use Chirp\Component\Chirp\Administrator\Helper\ChirpHelper;
  */
 class ControlpanelsModel extends ListModel
 {
-	
-
-	
-
-	
-
-	
-
 	/**
 	 * Method to auto-populate the model state.
 	 *
@@ -52,7 +41,7 @@ class ControlpanelsModel extends ListModel
 		// List state information.
 		parent::populateState("a.id", "ASC");
 
-		$context = $this->getUserStateFromRequest($this->context.'.filter.search', 'filter_search');
+		$context = $this->getUserStateFromRequest($this->context . '.filter.search', 'filter_search');
 		$this->setState('filter.search', $context);
 
 		// Split context into component and optional section
@@ -87,9 +76,7 @@ class ControlpanelsModel extends ListModel
 		$id .= ':' . $this->getState('filter.search');
 		$id .= ':' . $this->getState('filter.state');
 
-		
 		return parent::getStoreId($id);
-		
 	}
 
 	/**
@@ -115,8 +102,64 @@ class ControlpanelsModel extends ListModel
 	public function getItems()
 	{
 		$items = parent::getItems();
-		
 
 		return $items;
+	}
+
+	/**
+	 * graphdata function - reads data into json string
+	 *
+	 * @return  string
+	 */
+	public function shopnames()
+	{
+		$db = Factory::getContainer()->get('DatabaseDriver');
+		$query = $db->getQuery(true);
+		$query = "SELECT shop_name FROM `#__chirp_analytics`";
+		$db->setQuery($query);
+		$result = $db->loadObjectList();
+
+		$return = json_encode($result);
+
+		return $return;
+	}
+
+	/**
+	 * Undocumented function
+	 *
+	 * @param   string $shopName - table name for shop
+	 *
+	 * @return string
+	 */
+	public function shopdata($shopName)
+	{
+		$db = Factory::getContainer()->get('DatabaseDriver');
+		$query = $db->getQuery(true);
+		$query = "SELECT * FROM `#__$shopName`";
+		$db->setQuery($query);
+		$result = $db->loadObjectList();
+
+		$return = json_encode($result);
+
+		return $return;
+	}
+
+	/**
+	 * Undocumented function
+	 *
+	 * @param  [type] $shopName
+	 * @return void
+	 */
+	public function clickdata($shopName)
+	{
+		$db = Factory::getContainer()->get('DatabaseDriver');
+		$query = $db->getQuery(true);
+		$query = "SELECT * FROM `#__chirp_analytics` t1, `#__$shopName` t2 WHERE t1.shop_name = '$shopName' AND t1.order_id = t2.id";
+		$db->setQuery($query);
+		$result = $db->loadObjectList();
+
+		$return = json_encode($result);
+
+		return $return;
 	}
 }

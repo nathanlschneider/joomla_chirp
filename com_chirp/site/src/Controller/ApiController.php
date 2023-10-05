@@ -110,4 +110,16 @@ class ApiController extends BaseController
 			die;
 		}
 	}
+
+	/**
+	 * Undocumented function
+	 *
+	 * @return void
+	 */
+	public function graphdata()
+	{
+		$response = self::apiModel()->graphdata();
+		echo $response;
+		die;
+	}
 }

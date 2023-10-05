@@ -78,8 +78,6 @@ class ControlpanelsController extends AdminController
 		return parent::getModel($name, $prefix, array('ignore_request' => true));
 	}
 
-
-
 	/**
 	 * Method to save the submitted ordering values for records via AJAX.
 	 *

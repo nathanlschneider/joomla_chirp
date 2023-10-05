@@ -8,26 +8,27 @@ CREATE TABLE IF NOT EXISTS `#__chirp_control` (
 PRIMARY KEY (`id`)
 ) DEFAULT COLLATE=utf8mb4_unicode_ci;
 
-CREATE TABLE `#__chirp_analytics` (
+CREATE TABLE `jos_chirp_analytics` (
   `id` int(11) unsigned NOT NULL AUTO_INCREMENT,
-  `uniq_id` varchar(36) DEFAULT NULL,
-  `product_id` int(11) NOT NULL,
+  `click_id` varchar(36) DEFAULT NULL,
+  `order_id` int(11) NOT NULL,
   `click_date` timestamp NOT NULL DEFAULT current_timestamp(),
   `shop_name` varchar(20) NOT NULL,
   PRIMARY KEY (`id`),
-  UNIQUE KEY `uniq_id` (`uniq_id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci
+  UNIQUE KEY `uniq_id` (`click_id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
  CREATE TABLE IF NOT EXISTS `#__chirp_order_ref` (
   `id` int(11) UNSIGNED NOT NULL AUTO_INCREMENT,
   `updated` date NOT NULL DEFAULT current_timestamp(),
   `order_id` int(11) NOT NULL DEFAULT 0,
   `table_name` varchar(64) NULL,
+  `shop_name` varchar(64) NULL,
+  `column_id` varchar(64) NULL,
   PRIMARY KEY (`id`)
 ) DEFAULT COLLATE=utf8mb4_unicode_ci;
 
-INSERT INTO `#__chirp_order_ref` ( table_name ) VALUES ( 'easyshop_orders' );
-INSERT INTO `#__chirp_order_ref` ( table_name ) VALUES ( 'eshop_orders' );
-INSERT INTO `#__chirp_order_ref` ( table_name ) VALUES ( 'hikashop_order' );
-INSERT INTO `#__chirp_order_ref` ( table_name ) VALUES ( 'phocacart_orders' );
-
+INSERT INTO `#__chirp_order_ref` ( table_name, shop_name, column_id ) VALUES ( 'easyshop_orders', 'easyshop', 'id' );
+INSERT INTO `#__chirp_order_ref` ( table_name, shop_name, column_id ) VALUES ( 'eshop_orderproducts', 'eshop', 'id' );
+INSERT INTO `#__chirp_order_ref` ( table_name, shop_name, column_id ) VALUES ( 'hikashop_order', 'hikashop', 'order_id' );
+INSERT INTO `#__chirp_order_ref` ( table_name, shop_name, column_id ) VALUES ( 'phocacart_orders', 'phocacart', 'id' );

@@ -29,7 +29,7 @@ else
 		ob_flush();
 		flush();
 
-		sleep(4);
+		sleep(2);
 		file_put_contents('event.data', '');
 	}
 	else
