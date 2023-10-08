@@ -68,8 +68,20 @@
             }
         };
 
+        const setCookie = (name, value, daysToExpire) => {
+            const date = new Date();
+            date.setTime(date.getTime() + (daysToExpire * 24 * 60 * 60 * 1000)); // Calculate the expiration date
+            const expires = "expires=" + date.toUTCString();
+            document.cookie = name + "=" + value + ";" + expires + ";path=/";
+        }
+
         const showChirp = (data) => {
             console.log(data);
+            
+            const clickId = generateUniqueID();
+
+            setCookie('clickRef', clickId, 1);
+
             const alertSound = new Audio(
                 `/media/plg_system_chirp/wav/${settings.notificationsound}.wav`
             );
@@ -161,7 +173,7 @@
                 aOrAn = "a";
             }
 
-            chirpMessage = `${userNameStr}${locationStr} ordered ${aOrAn} <a href='${data.productLink}'><strong>${data.productName}</strong></a>!`;
+            chirpMessage = `${userNameStr}${locationStr} ordered ${aOrAn} <a href='${data.productLink}&clickRef=${clickId}'><strong>${data.productName}</strong></a>!`;
 
             chirp.innerHTML = `
             <div id='chirpProductImage'><img src='${data.productImage}' alt='' /></div>
@@ -176,7 +188,7 @@
 
             chirp.addEventListener("click", () => {
                 chirp.classList.remove("showChirp");
-                trackClick(data, generateUniqueID());
+                trackClick(data, clickId);
             });
             // settings.notificationlocation.split(":")[0]
             setTimeout(() => {

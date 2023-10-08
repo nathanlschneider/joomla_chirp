@@ -145,21 +145,21 @@ class ControlpanelsModel extends ListModel
 	}
 
 	/**
-	 * Undocumented function
+	 * Get click data for a shop.
 	 *
-	 * @param  [type] $shopName
-	 * @return void
+	 * @param   string $shopName The name of the shop.
+	 *
+	 * @return  string JSON-encoded click data.
 	 */
 	public function clickdata($shopName)
 	{
-		$db = Factory::getContainer()->get('DatabaseDriver');
-		$query = $db->getQuery(true);
-		$query = "SELECT * FROM `#__chirp_analytics` t1, `#__$shopName` t2 WHERE t1.shop_name = '$shopName' AND t1.order_id = t2.id";
+		$db = Factory::getDbo();
+		$query = $db->getQuery(true)
+			->select('*')
+			->from('#__chirp_analytics')
+			->where('shop_name = ' . $db->quote($shopName));
 		$db->setQuery($query);
-		$result = $db->loadObjectList();
 
-		$return = json_encode($result);
-
-		return $return;
+		return json_encode($db->loadAssocList());
 	}
 }

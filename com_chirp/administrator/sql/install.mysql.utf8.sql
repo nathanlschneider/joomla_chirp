@@ -29,6 +29,6 @@ CREATE TABLE `jos_chirp_analytics` (
 ) DEFAULT COLLATE=utf8mb4_unicode_ci;
 
 INSERT INTO `#__chirp_order_ref` ( table_name, shop_name, column_id ) VALUES ( 'easyshop_orders', 'easyshop', 'id' );
-INSERT INTO `#__chirp_order_ref` ( table_name, shop_name, column_id ) VALUES ( 'eshop_orderproducts', 'eshop', 'id' );
+INSERT INTO `#__chirp_order_ref` ( table_name, shop_name, column_id ) VALUES ( 'eshop_orderproducts', 'eshop', 'order_id' );
 INSERT INTO `#__chirp_order_ref` ( table_name, shop_name, column_id ) VALUES ( 'hikashop_order', 'hikashop', 'order_id' );
 INSERT INTO `#__chirp_order_ref` ( table_name, shop_name, column_id ) VALUES ( 'phocacart_orders', 'phocacart', 'id' );

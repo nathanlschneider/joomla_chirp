@@ -124,8 +124,10 @@ class PlgBehaviourChirp extends CMSPlugin implements SubscriberInterface
 			$query = $db->getQuery(true)
 				->select($db->quoteName($columnID))
 				->from($db->quoteName('#__' . $tableName))
-				->order($db->quoteName($columnID) . ' DESC')
-				->setMaxResults(1);
+				->order($db->quoteName($columnID) . ' DESC');
+
+			// Set a limit of 1 to retrieve only one result
+			$query->setLimit(1);
 
 			// Execute the second query
 			$db->setQuery($query);
@@ -140,6 +142,7 @@ class PlgBehaviourChirp extends CMSPlugin implements SubscriberInterface
 		return false;
 	}
 
+
 	/**
 	 * Update data in a database table.
 	 *
@@ -152,7 +155,8 @@ class PlgBehaviourChirp extends CMSPlugin implements SubscriberInterface
 	 */
 	protected function updateDB($orderId, $shopName)
 	{
-		$db = \Joomla\CMS\Factory::getDatabaseDriver();
+		// Get the database driver
+		$db = Factory::getContainer()->get('DatabaseDriver');
 
 		// Create a query builder instance
 		$query = $db->getQuery(true);
@@ -169,48 +173,53 @@ class PlgBehaviourChirp extends CMSPlugin implements SubscriberInterface
 		return $result;
 	}
 
+	use Joomla\CMS\Factory;
+	use Joomla\CMS\Database\DatabaseDriver;
+
 	/**
 	 * Builds Easy Shop event
 	 *
-	 * @param	string $refName - Name of shop extension
+	 * @param	string $orderId 		- Order ID
+	 * @param	string $refName 		- Name of shop extension
+	 * @param	string $backupImagePath - Backup image path
 	 *
 	 * @return  string Stringified json object
 	 */
-	protected function buildEasyShopEvent($refName)
+	protected function buildEasyShopEvent($orderId, $refName, $backupImagePath)
 	{
-		$db = Factory::getContainer()->get('DatabaseDriver');
-		$query = $db->getQuery(true);
-		$query = "SELECT * from `#__easyshop_order_products` ORDER BY order_id DESC LIMIT 1";
-		$db->setQuery($query);
-		$product = $db->loadObjectList();
+		// Get the database driver
+		$db = Factory::getContainer()->get(DatabaseDriver::class);
 
-		$orderId = (string) $product[0]->order_id;
-		$productId = (string) $product[0]->product_id;
+		$query = $db->getQuery(true)
+			->select('t3.name, t2.value, t4.product_name, t5.product_id, t5.file_path')
+			->from('#__easyshop_orders AS t1')
+			->innerJoin('#__easyshop_customfield_values AS t2 ON t2.reflector_id = t1.id')
+			->innerJoin('#__users AS t3 ON t3.email = t1.user_email')
+			->innerJoin('#__easyshop_order_products AS t4 ON t4.order_id = t1.id')
+			->leftJoin('#__easyshop_medias AS t5 ON t5.product_id = t4.product_id')
+			->where($db->quoteName('t1.order_code') . ' <> ' . $db->quote(''))
+			->where($db->quoteName('t1.id') . ' = ' . $db->quote($orderId))
+			->where($db->quoteName('t2.reflector') . ' = ' . $db->quote('com_easyshop.order.billing_address'))
+			->where($db->quoteName('t2.customfield_id') . ' = ' . $db->quote('4'))
+			->setLimit(1);
 
-		$query = $db->getQuery(true);
-		$query = "SELECT * from `#__easyshop_orders` t1,
-								`#__users` t2,
-								`#__easyshop_medias` t3,
-								`#__easyshop_customfield_values` t4 
-								WHERE t1.id = '$orderId' 
-								AND t4.reflector_id = '$orderId'
-								AND t1.user_email = t2.email
-								AND t3.product_id = $productId
-								";
 		$db->setQuery($query);
 		$order = $db->loadObjectList();
 
 		$obj = new stdClass;
 		$obj->shop = $refName;
-		$obj->orderId = $product[0]->order_id;
+		$obj->orderId = $orderId;
 		$obj->userName = $order[0]->name;
-		$obj->userCity = $order[2]->value;
-		$obj->productName = $product[0]->product_name;
-		$obj->productImage = "media/com_easyshop/" . $order[0]->file_path;
-		$obj->productLink = "index.php?option=com_easyshop&view=productdetail&id=" . $productId;
+		$obj->userCity = $order[0]->value;
+		$obj->productName = $order[0]->product_name;
+		$obj->productLink = "index.php?option=com_easyshop&view=productdetail&id=" . $order[0]->product_id;
+		$obj->productImage = isset($order[0]->file_path) ?
+			"media/com_easyshop/" . $order[0]->file_path :
+			$backupImagePath;
 
 		return json_encode($obj);
 	}
+
 
 	/**
 	 * Builds EShop event
@@ -220,7 +229,7 @@ class PlgBehaviourChirp extends CMSPlugin implements SubscriberInterface
 	 *
 	 * @return  string Stringified json object
 	 */
-	protected function buildEShopEvent($orderId, $refName)
+	protected function buildEShopEvent($orderId, $refName, $backupImagePath)
 	{
 
 		// Get the database driver
@@ -228,7 +237,7 @@ class PlgBehaviourChirp extends CMSPlugin implements SubscriberInterface
 
 		// Build the database query
 		$query = $db->getQuery(true)
-			->select('t1.firstname, t1.payment_city, t2.product_name, t3.product_image')
+			->select('t1.firstname, t1.payment_city, t2.product_id, t2.product_name, t3.product_image')
 			->from($db->quoteName('#__eshop_orders', 't1'))
 			->innerJoin($db->quoteName('#__eshop_orderproducts', 't2') . ' ON t1.id = t2.order_id')
 			->innerJoin($db->quoteName('#__eshop_products', 't3') . ' ON t2.product_id = t3.id')
@@ -245,9 +254,10 @@ class PlgBehaviourChirp extends CMSPlugin implements SubscriberInterface
 		$obj->userName = $product[0]->firstname;
 		$obj->userCity = $product[0]->payment_city;
 		$obj->productName = $product[0]->product_name;
+		$obj->productLink = "index.php?option=com_eshop&view=product&id=" . $product[0]->product_id;
 		$obj->productImage = isset($product[0]->product_image) ?
 			"media/com_eshop/products/" . $product[0]->product_image :
-			"media/plg_system_chirp/image/bird.png";
+			$backupImagePath;
 
 		return json_encode($obj);
 	}
@@ -259,7 +269,7 @@ class PlgBehaviourChirp extends CMSPlugin implements SubscriberInterface
 	 *
 	 * @return  string Stringified json object
 	 */
-	protected function buildHikaShopEvent($refName)
+	protected function buildHikaShopEvent($orderId, $refName, $backupImagePath)
 	{
 		$db = Factory::getContainer()->get('DatabaseDriver');
 		$query = $db->getQuery(true);
@@ -285,15 +295,9 @@ class PlgBehaviourChirp extends CMSPlugin implements SubscriberInterface
 		$obj->userCity = isset($product[0]->city) ? $product[0]->city : null;
 		$obj->productName = $product[0]->order_product_name;
 		$obj->productLink = "index.php?option=com_hikashop&ctrl=product&task=updatecart&quantity=1&cid=" . $product[0]->product_id;
-
-		if (isset($product[0]->file_path))
-		{
-			$obj->productImage = "images/com_hikashop/upload/" . $product[0]->file_path;
-		}
-		else
-		{
-			$obj->productImage = "media/plg_system_chirp/image/bird.png";
-		}
+		$obj->productImage = isset($product[0]->file_path) ?
+			"images/com_hikashop/upload/" . $product[0]->file_path :
+			$backupImagePath;
 
 		return json_encode($obj);
 	}
@@ -305,7 +309,7 @@ class PlgBehaviourChirp extends CMSPlugin implements SubscriberInterface
 	 *
 	 * @return  string Stringified json object
 	 */
-	protected function buildPhocaCartEvent($refName)
+	protected function buildPhocaCartEvent($orderId, $refName, $backupImagePath)
 	{
 		$db = Factory::getContainer()->get('DatabaseDriver');
 		$query = $db->getQuery(true);
@@ -329,15 +333,9 @@ class PlgBehaviourChirp extends CMSPlugin implements SubscriberInterface
 		$obj->userName = $product[0]->name_first;
 		$obj->userCity = $product[0]->city;
 		$obj->productName = $product[0]->title;
-
-		if (isset($product[0]->image))
-		{
-			$obj->productImage = "images/phocacartproducts/" . $product[0]->image;
-		}
-		else
-		{
-			$obj->productImage = "media/plg_system_chirp/image/bird.png";
-		}
+		$obj->productImage = isset($product[0]->image) ?
+			"images/phocacartproducts/" . $product[0]->image :
+			$backupImagePath;
 
 		return json_encode($obj);
 	}
@@ -360,6 +358,8 @@ class PlgBehaviourChirp extends CMSPlugin implements SubscriberInterface
 			'phocacart' => 'buildPhocaCartEvent',
 		];
 
+		$backupImagePath = "media/plg_system_chirp/image/bird.png";
+
 		// Check if $refName exists in the mapping array
 		if (isset($eventBuilders[$refName]))
 		{
@@ -367,7 +367,7 @@ class PlgBehaviourChirp extends CMSPlugin implements SubscriberInterface
 			$eventBuilderMethod = $eventBuilders[$refName];
 
 			// Call the event builder method
-			$contents = $this->$eventBuilderMethod($orderId, $refName);
+			$contents = $this->$eventBuilderMethod($orderId, $refName, $backupImagePath);
 
 			// Check if working path was changed and sets it back to Joomla's root
 			getcwd() !== JPATH_ROOT ? chdir(JPATH_ROOT) : null;
