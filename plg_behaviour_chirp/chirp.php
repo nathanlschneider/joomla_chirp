@@ -142,7 +142,6 @@ class PlgBehaviourChirp extends CMSPlugin implements SubscriberInterface
 		return false;
 	}
 
-
 	/**
 	 * Update data in a database table.
 	 *
@@ -172,9 +171,6 @@ class PlgBehaviourChirp extends CMSPlugin implements SubscriberInterface
 
 		return $result;
 	}
-
-	use Joomla\CMS\Factory;
-	use Joomla\CMS\Database\DatabaseDriver;
 
 	/**
 	 * Builds Easy Shop event
@@ -220,12 +216,12 @@ class PlgBehaviourChirp extends CMSPlugin implements SubscriberInterface
 		return json_encode($obj);
 	}
 
-
 	/**
 	 * Builds EShop event
 	 *
-	 * @param   string $orderId - order
-	 * @param	string $refName - Name of shop extension
+	 * @param   string $orderId 		- order
+	 * @param	string $refName 		- Name of shop extension
+	 * @param	string $backupImagePath - Backup image path
 	 *
 	 * @return  string Stringified json object
 	 */
@@ -265,32 +261,33 @@ class PlgBehaviourChirp extends CMSPlugin implements SubscriberInterface
 	/**
 	 * Builds Hikashop event
 	 *
-	 * @param	string $refName - Name of shop extension
+	 * @param	string $orderId 		- Order ID
+	 * @param	string $refName 		- Name of shop extension
+	 * @param	string $backupImagePath - Backup image path
 	 *
-	 * @return  string Stringified json object
+	 * @return string Stringified json object
 	 */
 	protected function buildHikaShopEvent($orderId, $refName, $backupImagePath)
 	{
-		$db = Factory::getContainer()->get('DatabaseDriver');
-		$query = $db->getQuery(true);
-		$query = "SELECT * FROM `#__hikashop_order` t1,
-								`#__hikashop_order_product` t2,
-								`#__hikashop_user` t3,
-								`#__users` t4,
-								`#__hikashop_file` t5
-								WHERE t1.order_id = t2.order_id
-								AND t1.order_user_id = t3.user_id
-								AND t3.user_cms_id = t4.id
-								AND t5.file_ref_id = t2.product_id
-								ORDER BY t1.order_id
-								DESC LIMIT 1
-								";
+		// Get the database driver
+		$db = Factory::getContainer()->get(DatabaseDriver::class);
+
+		$query = $db->getQuery(true)
+			->select('*')
+			->from('#__hikashop_order AS t1')
+			->join('INNER', '#__hikashop_order_product AS t2 ON t1.order_id = t2.order_id')
+			->join('INNER', '#__hikashop_user AS t3 ON t1.order_user_id = t3.user_id')
+			->join('INNER', '#__users AS t4 ON t3.user_cms_id = t4.id')
+			->leftJoin('#__hikashop_file AS t5 ON t5.file_ref_id = t2.product_id')
+			->order('t1.order_id DESC')
+			->setLimit(1);
+
 		$db->setQuery($query);
 		$product = $db->loadObjectList();
 
 		$obj = new stdClass;
 		$obj->shop = $refName;
-		$obj->orderId = $product[0]->order_id;
+		$obj->orderId = $orderId;
 		$obj->userName = $product[0]->name;
 		$obj->userCity = isset($product[0]->city) ? $product[0]->city : null;
 		$obj->productName = $product[0]->order_product_name;
@@ -305,34 +302,37 @@ class PlgBehaviourChirp extends CMSPlugin implements SubscriberInterface
 	/**
 	 * Builds Phocacart event
 	 *
-	 * @param	string $refName - Name of shop extension
+	 * @param	string $orderId 		- Order ID
+	 * @param	string $refName 		- Name of shop extension
+	 * @param	string $backupImagePath - Backup image path
 	 *
-	 * @return  string Stringified json object
+	 * @return string Stringified json object
 	 */
 	protected function buildPhocaCartEvent($orderId, $refName, $backupImagePath)
 	{
-		$db = Factory::getContainer()->get('DatabaseDriver');
-		$query = $db->getQuery(true);
-		$query = "SELECT * FROM `#__phocacart_orders` t1,
-								`#__phocacart_order_products` t2,
-								`#__phocacart_order_users` t3,
-								`#__phocacart_products` t4
-								WHERE t1.id = t2.order_id 
-								AND t2.product_id = t4.id 
-								AND t2.order_id = t3.order_id 
-								AND t3.type = 0 
-								ORDER BY t1.id 
-								DESC LIMIT 1; 
-								";
+		// Get the database driver
+		$db = Factory::getContainer()->get(DatabaseDriver::class);
+
+		$query = $db->getQuery(true)
+			->select('*')
+			->from('#__phocacart_orders AS t1')
+			->join('INNER', '#__phocacart_order_products AS t2 ON t1.id = t2.order_id')
+			->join('INNER', '#__phocacart_order_users AS t3 ON t2.order_id = t3.order_id')
+			->join('INNER', '#__phocacart_products AS t4 ON t2.product_id = t4.id')
+			->where($db->quoteName('t3.type') . ' = 0')
+			->order('t1.id DESC')
+			->setLimit(1);
+
 		$db->setQuery($query);
 		$product = $db->loadObjectList();
 
 		$obj = new stdClass;
 		$obj->shop = $refName;
-		$obj->orderId = $product[0]->id;
+		$obj->orderId = $orderId;
 		$obj->userName = $product[0]->name_first;
 		$obj->userCity = $product[0]->city;
 		$obj->productName = $product[0]->title;
+		$obj->productLink = "/index.php?option=com_phocacart&view=item&id=" . $product[0]->id;
 		$obj->productImage = isset($product[0]->image) ?
 			"images/phocacartproducts/" . $product[0]->image :
 			$backupImagePath;

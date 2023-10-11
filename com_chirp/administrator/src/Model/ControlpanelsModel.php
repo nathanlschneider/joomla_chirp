@@ -114,8 +114,9 @@ class ControlpanelsModel extends ListModel
 	public function shopnames()
 	{
 		$db = Factory::getContainer()->get('DatabaseDriver');
-		$query = $db->getQuery(true);
-		$query = "SELECT shop_name FROM `#__chirp_analytics`";
+		$query = $db->getQuery(true)
+			->select($db->quoteName('shop_name'))
+			->from($db->quoteName('#__chirp_analytics'));
 		$db->setQuery($query);
 		$result = $db->loadObjectList();
 
@@ -134,8 +135,9 @@ class ControlpanelsModel extends ListModel
 	public function shopdata($shopName)
 	{
 		$db = Factory::getContainer()->get('DatabaseDriver');
-		$query = $db->getQuery(true);
-		$query = "SELECT * FROM `#__$shopName`";
+		$query = $db->getQuery(true)
+			->select('*')
+			->from($db->quoteName('#__' . $shopName));
 		$db->setQuery($query);
 		$result = $db->loadObjectList();
 
@@ -153,7 +155,7 @@ class ControlpanelsModel extends ListModel
 	 */
 	public function clickdata($shopName)
 	{
-		$db = Factory::getDbo();
+		$db = Factory::getContainer()->get('DatabaseDriver');
 		$query = $db->getQuery(true)
 			->select('*')
 			->from('#__chirp_analytics')
@@ -161,5 +163,32 @@ class ControlpanelsModel extends ListModel
 		$db->setQuery($query);
 
 		return json_encode($db->loadAssocList());
+	}
+
+	/**
+	 * Get the row count of a table.
+	 *
+	 * @param   string $table The name of the table.
+	 *
+	 * @return string The row count.
+	 */
+	public function getRowCount($table)
+	{
+		$db = Factory::getContainer()->get('DatabaseDriver');
+
+		$query = $db->getQuery(true)
+			->select('*')
+			->from('#__chirp_order_ref')
+			->where('shop_name = ' . $db->quote($table));
+		$db->setQuery($query);
+		$results = $db->loadObjectList();
+
+		$query = $db->getQuery(true)
+			->select('COUNT(*)')
+			->from($db->quoteName('#__' . $results[0]->table_name));
+
+		$db->setQuery($query);
+
+		return $db->loadResult();
 	}
 }

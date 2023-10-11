@@ -1,5 +1,4 @@
 <?php
-
 /**
  * @version    CVS: 0.1.0
  * @package    Com_Chirp
@@ -9,7 +8,6 @@
  */
 
 namespace Chirp\Component\Chirp\Administrator\View\Controlpanels;
-
 // No direct access
 defined('_JEXEC') or die;
 
@@ -21,7 +19,6 @@ use \Joomla\CMS\Language\Text;
 use \Joomla\Component\Content\Administrator\Extension\ContentComponent;
 use \Joomla\CMS\Form\Form;
 use \Joomla\CMS\HTML\Helpers\Sidebar;
-
 /**
  * View class for a list of Controlpanels.
  *
@@ -47,8 +44,8 @@ class HtmlView extends BaseHtmlView
 	public function display($tpl = null)
 	{
 		$this->state = $this->get('State');
-
-
+		
+		
 
 		// Check for errors.
 		if (count($errors = $this->get('Errors')))
@@ -56,7 +53,7 @@ class HtmlView extends BaseHtmlView
 			throw new \Exception(implode("\n", $errors));
 		}
 
-		// $this->addToolbar();
+		$this->addToolbar();
 
 		$this->sidebar = Sidebar::render();
 		parent::display($tpl);
@@ -85,12 +82,65 @@ class HtmlView extends BaseHtmlView
 		{
 			if ($canDo->get('core.create'))
 			{
-				$toolbar->apply('component.apply');
-				$toolbar->divider();
-				$toolbar->save('component.save');
-				$toolbar->divider();
-				$toolbar->cancel('component.cancel');
-				$toolbar->divider();
+				$toolbar->addNew('controlpanel.add');
+			}
+		}
+
+		if ($canDo->get('core.edit.state'))
+		{
+			$dropdown = $toolbar->dropdownButton('status-group')
+				->text('JTOOLBAR_CHANGE_STATUS')
+				->toggleSplit(false)
+				->icon('fas fa-ellipsis-h')
+				->buttonClass('btn btn-action')
+				->listCheck(true);
+
+			$childBar = $dropdown->getChildToolbar();
+
+			if (isset($this->items[0]->state))
+			{
+				$childBar->publish('controlpanels.publish')->listCheck(true);
+				$childBar->unpublish('controlpanels.unpublish')->listCheck(true);
+				$childBar->archive('controlpanels.archive')->listCheck(true);
+			}
+			elseif (isset($this->items[0]))
+			{
+				// If this component does not use state then show a direct delete button as we can not trash
+				$toolbar->delete('controlpanels.delete')
+				->text('JTOOLBAR_EMPTY_TRASH')
+				->message('JGLOBAL_CONFIRM_DELETE')
+				->listCheck(true);
+			}
+
+			$childBar->standardButton('duplicate')
+				->text('JTOOLBAR_DUPLICATE')
+				->icon('fas fa-copy')
+				->task('controlpanels.duplicate')
+				->listCheck(true);
+
+			if (isset($this->items[0]->checked_out))
+			{
+				$childBar->checkin('controlpanels.checkin')->listCheck(true);
+			}
+
+			if (isset($this->items[0]->state))
+			{
+				$childBar->trash('controlpanels.trash')->listCheck(true);
+			}
+		}
+
+		
+
+		// Show trash and delete for components that uses the state field
+		if (isset($this->items[0]->state))
+		{
+
+			if ($this->state->get('filter.state') == ContentComponent::CONDITION_TRASHED && $canDo->get('core.delete'))
+			{
+				$toolbar->delete('controlpanels.delete')
+					->text('JTOOLBAR_EMPTY_TRASH')
+					->message('JGLOBAL_CONFIRM_DELETE')
+					->listCheck(true);
 			}
 		}
 
@@ -101,6 +151,17 @@ class HtmlView extends BaseHtmlView
 
 		// Set sidebar action
 		Sidebar::setAction('index.php?option=com_chirp&view=controlpanels');
+	}
+	
+	/**
+	 * Method to order fields 
+	 *
+	 * @return void 
+	 */
+	protected function getSortFields()
+	{
+		return array(
+		);
 	}
 
 	/**

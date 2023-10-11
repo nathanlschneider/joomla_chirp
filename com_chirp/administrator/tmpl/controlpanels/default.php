@@ -11,16 +11,30 @@
 // No direct access
 defined('_JEXEC') or die;
 
+use Joomla\CMS\Form\Form;
 use Joomla\CMS\Component\ComponentHelper;
+use Joomla\CMS\Factory;
+
+$input = Factory::getApplication()->input;
+$requestData = $input->request;
+$paramValue = $input->get('myform[customFallback]', '');
+
+if ($paramValue !== '')
+{
+	echo 'eat it!';
+	die;
+}
 
 $param = ComponentHelper::getParams('com_chirp');
 $shop = $param->get('shops');
 
 $clickData = $this->getModel()->clickdata($shop);
+$rowCount = $this->getModel()->getRowCount($shop);
+$averageClicks = 0; //$rowCount / count(json_decode($clickData[0], true));
+
 
 $clicksToday = 0;
 $clicksThisWeek = 0;
-$averageClicks = 0;
 $currentDate = new DateTime;
 $json = json_decode($clickData);
 
@@ -53,6 +67,10 @@ foreach ($json as $value)
 		font-family: Roboto, sans-serif;
 		max-width: 650px;
 		margin: 35px auto;
+	}
+
+	#chirp_tagline {
+		text-align: right;
 	}
 
 	#chirp_dash {
@@ -132,6 +150,9 @@ foreach ($json as $value)
 		cursor: pointer;
 		border: 1px solid #ccc;
 		background-color: #f0f0f0;
+		text-align: center;
+		display: flex;
+		align-items: center;
 	}
 
 	.tab:nth-of-type(2) {
@@ -166,15 +187,16 @@ foreach ($json as $value)
 <header id="chirp_header">
 	<div class="tabs">
 		<div class="tab" onclick="showScreen(0)">Dashboard</div>
-		<div class="tab" onclick="showScreen(1)">Settings</div>
+		<div class="tab" onclick="showScreen(1)">Shop Settings</div>
 		<div class="tab" onclick="showScreen(2)">Customizations</div>
 	</div>
 	<div>
-		<h1>Chirp 🐦 Your Ultimate Social Proof Solution for Joomla!</h1>
+		<h1 id="chirp_tagline">Chirp! 🐦 Your Ultimate Social Proof Solution for Joomla!</h1>
 	</div>
 </header>
 <hr />
 <div class="tab_content active" id="screen1">
+	<h2>Dashboard</h2>
 	<div id="main_content">
 		<section id="chirp_dash">
 			<div id="chirp_dash_top">
@@ -238,23 +260,71 @@ foreach ($json as $value)
 	</div>
 </div>
 <div class="tab_content" id="screen2">
+	<h2>Shop Settings</h2>
+
 	<section class="white_bg">
-		<h2>License Activation</h2>
-		<input type="text" name="license" placeholder="License" />
-		<input type="text" name="email" placeholder="Email" />
-		<input type="button" name="Activate" />
+		<form action="" method="post" name="shopSettingsFOrm" id="shopSettingsForm" enctype="multipart/form-data">
+			<?php $form = Form::getInstance("shopSettingsForm", JPATH_COMPONENT_ADMINISTRATOR . "/forms/shopSettingsForm.xml", array("control" => "myform")) ?>
+
+			<div class="chirp_white_box">
+				<?php echo $form->renderField('stockFallback') ?>
+				<img src='/media/plg_system_chirp/image/bird.png' alt="" />
+			</div>
+			<div class="chirp_white_box">
+				<?php echo $form->renderField('customFallback') ?>
+				<?php echo $form->renderField('customFallbackImage') ?>
+			</div>
+			<nav aria-label="Toolbar">
+				<div class="btn-toolbar d-flex" role="toolbar" id="toolbar">
+					<joomla-toolbar-button id="toolbar-apply" task="component.apply" form-validation="">
+						<button id="chirpSaveBtn" class="button-apply btn btn-success" type="button">
+							<span class="icon-apply" aria-hidden="true"></span>
+							Save</button>
+					</joomla-toolbar-button>
+					<joomla-toolbar-button id="toolbar-help" class="ms-auto">
+						<button class="button-help btn btn-info js-toolbar-help-btn" data-url="help/en-GB/.html" data-title="Chirp! Help" data-width="700" data-height="500" data-scroll="1" type="button" title="Opens in a new window">
+							<span class="icon-question" aria-hidden="true"></span>
+							Help</button>
+					</joomla-toolbar-button>
+				</div>
+			</nav>
+		</form>
 	</section>
-	<?php
 
-
-	?>
 </div>
 <div class="tab_content" id="screen3">
-	<h2>Screen 3</h2>
-	<p>This is the content of Screen 3.</p>
+	<h2>Customizations</h2>
+	<nav aria-label="Toolbar">
+		<div class="btn-toolbar d-flex" role="toolbar" id="toolbar">
+			<joomla-toolbar-button id="toolbar-apply" task="component.apply" form-validation="">
+				<button class="button-apply btn btn-success" type="button">
+					<span class="icon-apply" aria-hidden="true"></span>
+					Save</button>
+			</joomla-toolbar-button>
+			<joomla-toolbar-button id="toolbar-help" class="ms-auto">
+				<button class="button-help btn btn-info js-toolbar-help-btn" data-url="help/en-GB/.html" data-title="Chirp! Help" data-width="700" data-height="500" data-scroll="1" type="button" title="Opens in a new window">
+					<span class="icon-question" aria-hidden="true"></span>
+					Help</button>
+			</joomla-toolbar-button>
+		</div>
+	</nav>
 </div>
 
 <script>
+	const chirpSaveBtn = document.querySelector("#chirpSaveBtn");
+
+	chirpSaveBtn.addEventListener('click', (e) => {
+		doChirpForm();
+	})
+
+	async function doChirpForm() {
+		const fetched = await fetch('/administrator/index.php?option=com_chirp&view=controlpanels', {
+			method: 'POST'
+		});
+		const text = await fetched.text();
+		alert(text);
+	}
+
 	function showScreen(screenIndex) {
 		// Hide all screens
 		const screens = document.querySelectorAll('.tab_content');
