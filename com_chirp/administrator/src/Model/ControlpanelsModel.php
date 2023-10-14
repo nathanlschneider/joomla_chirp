@@ -182,13 +182,13 @@ class ControlpanelsModel extends ListModel
 			->where('shop_name = ' . $db->quote($table));
 		$db->setQuery($query);
 		$results = $db->loadObjectList();
-
 		$query = $db->getQuery(true)
 			->select('COUNT(*)')
 			->from($db->quoteName('#__' . $results[0]->table_name));
 
 		$db->setQuery($query);
+		$result = $db->loadResult();
 
-		return $db->loadResult();
+		return $result;
 	}
 }

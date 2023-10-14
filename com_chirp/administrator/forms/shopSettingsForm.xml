@@ -1,8 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <form>
     <fieldset name="shopSettingsForm">
-          <field name="stockFallback" type="checkbox" label="Fallback Image" description="Stock image to show if product image is unavailable" value="1" checked="0" />
-          <field name="customFallback" type="checkbox" label="Custom Fallback Image" description="Custom image to show if product image is unavailable" value="1" checked="1" />
-          <field name="customFallbackImage" type="accessiblemedia" directory="stories" />
+          <field name="myimage" type="media" directory="stories" />
     </fieldset>
 </form>

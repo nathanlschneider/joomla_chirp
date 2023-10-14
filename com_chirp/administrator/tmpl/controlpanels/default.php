@@ -30,11 +30,20 @@ $shop = $param->get('shops');
 
 $clickData = $this->getModel()->clickdata($shop);
 $rowCount = $this->getModel()->getRowCount($shop);
-$averageClicks = 0; //$rowCount / count(json_decode($clickData[0], true));
-
 
 $clicksToday = 0;
 $clicksThisWeek = 0;
+$allClicks = count(json_decode($clickData, true));
+
+if ($allClicks === 0)
+{
+	$averageClicks = 0;
+}
+else
+{
+	$averageClicks = $rowCount / $allClicks;
+}
+
 $currentDate = new DateTime;
 $json = json_decode($clickData);
 
@@ -82,7 +91,7 @@ foreach ($json as $value)
 	#chirp_header {
 		display: flex;
 		align-items: center;
-		justify-content: space-between;
+		justify-content: center;
 	}
 
 	#chirp_dash_top {
@@ -114,6 +123,7 @@ foreach ($json as $value)
 		padding: 10px;
 		position: relative;
 		transition: .3s all;
+		border-radius: 5px;
 	}
 
 	.disabled {
@@ -141,39 +151,68 @@ foreach ($json as $value)
 		font-size: 11rem;
 	}
 
-	.tabs {
+	.chirp_tabs {
 		display: flex;
+		box-shadow: 0 2px 10px -8px #4d79b3;
+		margin-top: 40px;
+		margin-bottom: 40px;
 	}
 
-	.tab {
+	.chirp_tab {
 		padding: 10px 20px;
 		cursor: pointer;
 		border: 1px solid #ccc;
-		background-color: #f0f0f0;
+		background-color: #fff;
 		text-align: center;
 		display: flex;
 		align-items: center;
+		justify-content: center;
+		width: 160px;
 	}
 
-	.tab:nth-of-type(2) {
+	.chirp_tab:nth-of-type(2) {
 		border-right: none;
 		border-left: none;
 	}
 
-	.tab.active {
-		background-color: #fff;
+	.chirp_tab.active {
+		background-color: #457d54;
+		color: #fff;
+		font-weight: 500;
 	}
 
-	.tab_content {
+	.chirp_tab_content {
 		display: none;
 	}
 
-	.tab_content.active {
+	.chirp_tab_content.active {
 		display: block;
-		animation: fadeIn 0.5s ease-in-out;
+		animation: chirpFadeIn 0.5s ease-in-out;
 	}
 
-	@keyframes fadeIn {
+	#subhead-container {
+		display: none;
+	}
+
+	.chirp_form,
+	#chirp_dash {
+		box-shadow: 0 2px 10px -8px #4d79b3;
+		background-color: #fff;
+		padding: 40px;
+		border-radius: 5px;
+	}
+
+	#chirp_tab_a {
+		border-top-left-radius: 5px;
+		border-bottom-left-radius: 5px;
+	}
+
+	#chirp_tab_c {
+		border-top-right-radius: 5px;
+		border-bottom-right-radius: 5px;
+	}
+
+	@keyframes chirpFadeIn {
 		0% {
 			opacity: 0;
 		}
@@ -185,19 +224,16 @@ foreach ($json as $value)
 </style>
 <script src="https://cdn.jsdelivr.net/npm/apexcharts"></script>
 <header id="chirp_header">
-	<div class="tabs">
-		<div class="tab" onclick="showScreen(0)">Dashboard</div>
-		<div class="tab" onclick="showScreen(1)">Shop Settings</div>
-		<div class="tab" onclick="showScreen(2)">Customizations</div>
-	</div>
-	<div>
-		<h1 id="chirp_tagline">Chirp! 🐦 Your Ultimate Social Proof Solution for Joomla!</h1>
+	<div class="chirp_tabs">
+		<div id="chirp_tab_a" class="chirp_tab active">Dashboard</div>
+		<div id="chirp_tab_b" class="chirp_tab">Shop Settings</div>
+		<div id="chirp_tab_c" class="chirp_tab">Customizations</div>
 	</div>
 </header>
-<hr />
-<div class="tab_content active" id="screen1">
+<div class="chirp_tab_content active" id="chirp_screen1">
 	<h2>Dashboard</h2>
-	<div id="main_content">
+	<!-- <h2 id="chirp_tagline">Chirp! 🐦 Your Ultimate Social Proof Solution for Joomla!</h2> -->
+	<div id="chirp_main_content">
 		<section id="chirp_dash">
 			<div id="chirp_dash_top">
 				<div class="chirp_data_box">
@@ -213,105 +249,90 @@ foreach ($json as $value)
 					<div class="chirp_data_box_clicks"><?php echo $averageClicks; ?></div>
 				</div>
 				<div class="chirp_data_box">
-					<div class="chirp_data_box_title">Conversions</div>
-					<div class="chirp_data_box_clicks"><?php echo $clicksToday; ?></div>
+					<div class="chirp_data_box_title">All time clicks</div>
+					<div class="chirp_data_box_clicks"><?php echo $allClicks; ?></div>
 				</div>
 			</div>
 			<div id="chirp_dash_left">
 				<div id="chart_left"></div>
-				<script>
-					var options = {
-						chart: {
-							type: 'bar'
-						},
-						series: [{
-							name: 'sales',
-							data: [30, 40, 45, 50, 49, 60, 70, 91, 125]
-						}],
-						xaxis: {
-							categories: [1991, 1992, 1993, 1994, 1995, 1996, 1997, 1998, 1999]
-						}
-					}
-					var chartLeft = new ApexCharts(document.querySelector("#chart_left"), options);
-					// chartLeft.render();
-				</script>
+
 			</div>
 			<div id="chirp_dash_right">
-				<div id="chart_right">
-					<script>
-						var options = {
-							chart: {
-								type: 'bar'
-							},
-							series: [{
-								name: 'sales',
-								data: [30, 40, 45, 50, 49, 60, 70, 91, 125]
-							}],
-							xaxis: {
-								categories: [1991, 1992, 1993, 1994, 1995, 1996, 1997, 1998, 1999]
-							}
-						}
-						var chartRight = new ApexCharts(document.querySelector("#chart_right"), options);
-						// chartRight.render();
-					</script>
+				<div id="chirp_chart_right">
+
 				</div>
 			</div>
 		</section>
 	</div>
 </div>
-<div class="tab_content" id="screen2">
+<div class="chirp_tab_content" id="chirp_screen2">
 	<h2>Shop Settings</h2>
+	<form action="" method="post" class="chirp_form" name="shopSettingsForm" id="shopSettingsForm" enctype="multipart/form-data">
 
-	<section class="white_bg">
-		<form action="" method="post" name="shopSettingsFOrm" id="shopSettingsForm" enctype="multipart/form-data">
-			<?php $form = Form::getInstance("shopSettingsForm", JPATH_COMPONENT_ADMINISTRATOR . "/forms/shopSettingsForm.xml", array("control" => "myform")) ?>
-
-			<div class="chirp_white_box">
-				<?php echo $form->renderField('stockFallback') ?>
-				<img src='/media/plg_system_chirp/image/bird.png' alt="" />
+		<nav aria-label="Toolbar">
+			<div class="btn-toolbar d-flex" role="toolbar" id="toolbar">
+				<joomla-toolbar-button id="toolbar-apply" task="component.apply" form-validation="">
+					<button class="button-apply btn btn-success" type="button">
+						<span class="icon-apply" aria-hidden="true"></span>
+						Save</button>
+				</joomla-toolbar-button>
+				<joomla-toolbar-button id="toolbar-help" class="ms-auto">
+					<button class="button-help btn btn-info js-toolbar-help-btn" data-url="help/en-GB/.html" data-title="Chirp! Help" data-width="700" data-height="500" data-scroll="1" type="button" title="Opens in a new window">
+						<span class="icon-question" aria-hidden="true"></span>
+						Help</button>
+				</joomla-toolbar-button>
 			</div>
-			<div class="chirp_white_box">
-				<?php echo $form->renderField('customFallback') ?>
-				<?php echo $form->renderField('customFallbackImage') ?>
-			</div>
-			<nav aria-label="Toolbar">
-				<div class="btn-toolbar d-flex" role="toolbar" id="toolbar">
-					<joomla-toolbar-button id="toolbar-apply" task="component.apply" form-validation="">
-						<button id="chirpSaveBtn" class="button-apply btn btn-success" type="button">
-							<span class="icon-apply" aria-hidden="true"></span>
-							Save</button>
-					</joomla-toolbar-button>
-					<joomla-toolbar-button id="toolbar-help" class="ms-auto">
-						<button class="button-help btn btn-info js-toolbar-help-btn" data-url="help/en-GB/.html" data-title="Chirp! Help" data-width="700" data-height="500" data-scroll="1" type="button" title="Opens in a new window">
-							<span class="icon-question" aria-hidden="true"></span>
-							Help</button>
-					</joomla-toolbar-button>
-				</div>
-			</nav>
-		</form>
-	</section>
-
+		</nav>
+	</form>
 </div>
-<div class="tab_content" id="screen3">
+
+<div class="chirp_tab_content" id="chirp_screen3">
 	<h2>Customizations</h2>
-	<nav aria-label="Toolbar">
-		<div class="btn-toolbar d-flex" role="toolbar" id="toolbar">
-			<joomla-toolbar-button id="toolbar-apply" task="component.apply" form-validation="">
-				<button class="button-apply btn btn-success" type="button">
-					<span class="icon-apply" aria-hidden="true"></span>
-					Save</button>
-			</joomla-toolbar-button>
-			<joomla-toolbar-button id="toolbar-help" class="ms-auto">
-				<button class="button-help btn btn-info js-toolbar-help-btn" data-url="help/en-GB/.html" data-title="Chirp! Help" data-width="700" data-height="500" data-scroll="1" type="button" title="Opens in a new window">
-					<span class="icon-question" aria-hidden="true"></span>
-					Help</button>
-			</joomla-toolbar-button>
+	<form action="" method="post" class="chirp_form" name="customizationForm" id="customizationForm" enctype="multipart/form-data">
+		<?php $form = Form::getInstance("shopSettingsForm", JPATH_COMPONENT_ADMINISTRATOR . "/forms/shopSettingsForm.xml", array("control" => "myform")) ?>
+
+		<div class="chirp_section_row">
+			<?php echo $form->renderField('myimage') ?>
 		</div>
-	</nav>
+		<div class="chirp_section_row">
+		</div>
+		<div class="chirp_section_row">
+		</div>
+		<div class="chirp_section_row">
+		</div>
+
+		<nav aria-label="Toolbar">
+			<div class="btn-toolbar d-flex" role="toolbar" id="toolbar">
+				<joomla-toolbar-button id="toolbar-apply" task="component.apply" form-validation="">
+					<button id="chirpSaveBtn" class="button-apply btn btn-success" type="button">
+						<span class="icon-apply" aria-hidden="true"></span>
+						Save</button>
+				</joomla-toolbar-button>
+				<joomla-toolbar-button id="toolbar-help" class="ms-auto">
+					<button class="button-help btn btn-info js-toolbar-help-btn" data-url="help/en-GB/.html" data-title="Chirp! Help" data-width="700" data-height="500" data-scroll="1" type="button" title="Opens in a new window">
+						<span class="icon-question" aria-hidden="true"></span>
+						Help</button>
+				</joomla-toolbar-button>
+			</div>
+		</nav>
+	</form>
 </div>
 
 <script>
 	const chirpSaveBtn = document.querySelector("#chirpSaveBtn");
+	const chirpTabs = document.querySelectorAll('.chirp_tab');
+	const chirpTabsParent = document.querySelector('.chirp_tabs');
+
+	chirpTabsParent.addEventListener('click', (e) => {
+
+		const chirpTabsParentChildren = Array.from(chirpTabsParent.children);
+
+		chirpTabsParentChildren.forEach(child => child.classList.remove('active'));
+
+		e.target.classList.add('active');
+
+		showScreen(chirpTabsParentChildren.indexOf(e.target));
+	})
 
 	chirpSaveBtn.addEventListener('click', (e) => {
 		doChirpForm();
@@ -327,11 +348,11 @@ foreach ($json as $value)
 
 	function showScreen(screenIndex) {
 		// Hide all screens
-		const screens = document.querySelectorAll('.tab_content');
+		const screens = document.querySelectorAll('.chirp_tab_content');
 		screens.forEach(screen => screen.classList.remove('active'));
 
 		// Show the selected screen
-		const selectedScreen = document.getElementById(`screen${screenIndex + 1}`);
+		const selectedScreen = document.getElementById(`chirp_screen${screenIndex + 1}`);
 		selectedScreen.classList.add('active');
 	}
 </script>
