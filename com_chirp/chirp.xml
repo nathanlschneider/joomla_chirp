@@ -44,9 +44,7 @@
 
             <menu link="option=com_chirp&amp;view=controlpanels" view="controlpanels"
                 alt="Chirp/Controlpanel">COM_CHIRP_TITLE_CONTROLPANELS</menu>
-            <menu
-                link="option=com_config&amp;view=component&amp;component=com_chirp&amp;path=&amp;return="
-                view="component" alt="Chirp/Settings">COM_CHIRP_TITLE_SETTINGS</menu>
+           
         </submenu>
         <files folder="administrator">
             <filename>access.xml</filename>

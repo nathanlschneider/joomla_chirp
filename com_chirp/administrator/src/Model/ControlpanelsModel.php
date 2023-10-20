@@ -24,6 +24,30 @@ use \Joomla\CMS\Factory;
  */
 class ControlpanelsModel extends ListModel
 {
+
+	/**
+	 * Undocumented function
+	 *
+	 * @param  [type] $data
+	 * @return void
+	 */
+	public function saveConfig($data)
+	{
+
+		$db = Factory::getContainer()->get('DatabaseDriver');
+		$query = $db->getQuery(true);
+		$query->update($db->quoteName('#__extensions'))
+			->set($db->quoteName('params') . ' = ' . $db->quote(json_encode($data)))
+			->where($db->quoteName('name') . ' = ' . $db->quote('com_chirp'))
+			->where($db->quoteName('element') . ' = ' . $db->quote('com_chirp'));
+
+		$db->setQuery($query);
+		$result = $db->execute();
+
+		return $result;
+	}
+
+
 	/**
 	 * Method to auto-populate the model state.
 	 *

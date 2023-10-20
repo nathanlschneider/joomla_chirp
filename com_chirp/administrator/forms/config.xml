@@ -1,11 +1,109 @@
 <?xml version="1.0" encoding="utf-8"?>
-<config>
+<form>
+  <fieldset label="" name="customSettings">
+    <field name="backgroundcolor" type="color" format="hex"
+      label="CHIRP_BACKGROUNDCOLOR" />
+    <field name="bordercolor" type="color" format="hex"
+      label="CHIRP_BORDERCOLOR" />
+    <field name="textcolor" type="color" format="hex"
+      label="CHIRP_TEXTCOLOR" />
+    <field name="linkcolor" type="color" format="hex"
+      label="CHIRP_LINKCOLOR" />
+  </fieldset>
+  <fieldset label="" name="shopSettings">
+    <field name="imagespath" type="text" default="" label="Images Path"
+      description="Add a system path here if you need to override the default images location"
+      size="10" />
+  </fieldset>
+  <fieldset label="COM_CHIRP_SETTINGS" name="chirpSettings">
+    <field name="shops" type="list" label="COM_CHIRP_FORM_LBL_SHOPS"
+      description="COM_CHIRP_FORM_DESC_SHOPS"
+      hint="COM_CHIRP_FORM_LBL_SHOP">
+      <option value="eshop">Eshop</option>
+      <option value="easyshop">Easy Shop</option>
+      <option value="hikashop">Hikashop</option>
+      <option value="phocacart">Phocacart</option>
+    </field>
+    <field
+      name="usergroups"
+      type="UserGroupList"
+      label="COM_CHIRP_FORM_LBL_USERGROUPS"
+      description="COM_CHIRP_FORM_DESC_USERGROUPS"
+      layout="joomla.form.field.list-fancy-select"
+      checksuperusergroup="0"
+      default=""
+      multiple="1"
+    >
+    </field>
+    <field name="notificationlocation" type="list" label="COM_CHIRP_FORM_LBL_NOTIFICATIONLOCATION"
+      description="COM_CHIRP_FORM_DESC_NOTIFICATIONLOCATION"
+      hint="COM_CHIRP_FORM_LBL_NOTIFICATIONLOCATION">
+      <option value="top-left">Top Left</option>
+      <option value="top-center">Top Center</option>
+      <option value="top-right">Top Right</option>
+      <option value="center-right">Center Right</option>
+      <option value="bottom-right">Bottom Right</option>
+      <option value="bottom-center">Bottom Center</option>
+      <option value="bottom-left">Bottom Left</option>
+      <option value="center-left">Center Left</option>
+    </field>
+
+    <field class="btn-group btn-group-yesno" name="sound" type="radio" buttons="true"
+      layout="joomla.form.field.radio.switcher"
+      default="0" filter="boolean" label="COM_CHIRP_FORM_LBL_SOUND"
+      description="COM_CHIRP_FORM_DESC_SOUND"
+      hint="COM_CHIRP_FORM_LBL_SOUND">
+      <option value="0">JNO</option>
+      <option value="1">JYES</option>
+    </field>
+    <field name="notificationsound" type="list" label="COM_CHIRP_FORM_LBL_NOTIFICATIONSOUND"
+      description="COM_CHIRP_FORM_DESC_NOTIFICATIONSOUND">
+      <option value="692819__hollandm__woodblock-med">Wood Block</option>
+      <option value="28852__junggle__btn042">Chirp</option>
+    </field>
+    <field name="chirpshowlength" type="text" class="validate-numeric" default="10"
+      label="COM_CHIRP_FORM_DESC_LBL" description="COM_CHIRP_FORM_DESC_LENGTH"
+      size="10" />
+  </fieldset>
+
   <fieldset name="permissions" description="JCONFIG_PERMISSIONS_DESC"
     label="JCONFIG_PERMISSIONS_LABEL">
     <field name="rules" type="rules" component="com_chirp" class="inputbox" filter="rules"
       validate="rules" label="JCONFIG_PERMISSIONS_LABEL" section="component" />
   </fieldset>
-</config>
+
+  <fieldset name="component">
+    <field
+      name="save_history"
+      type="radio"
+      default="0"
+      label="JGLOBAL_SAVE_HISTORY_OPTIONS_LABEL"
+      description="JGLOBAL_SAVE_HISTORY_OPTIONS_DESC"
+      layout="joomla.form.field.radio.switcher"
+    >
+      <option value="0">JNO</option>
+      <option value="1">JYES</option>
+    </field>
+
+    <field name="history_limit" type="text" filter="integer"
+      label="JGLOBAL_HISTORY_LIMIT_OPTIONS_LABEL" description="JGLOBAL_HISTORY_LIMIT_OPTIONS_DESC"
+      default="5" />
+
+
+    <field
+      name="sef_ids"
+      type="radio"
+      layout="joomla.form.field.radio.switcher"
+      default="0"
+      label="JGLOBAL_SEF_NOIDS_LABEL"
+      description="JGLOBAL_SEF_NOIDS_DESC"
+      filter="integer"
+    >
+      <option value="0">JNO</option>
+      <option value="1">JYES</option>
+    </field>
+  </fieldset>
+</form>
 <!--
 ########################################################################################
 The following are a list of all the different types of fields you can add to this file

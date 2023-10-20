@@ -48,15 +48,13 @@ class HtmlView extends BaseHtmlView
 	{
 		$this->state = $this->get('State');
 
-
-
 		// Check for errors.
 		if (count($errors = $this->get('Errors')))
 		{
 			throw new \Exception(implode("\n", $errors));
 		}
 
-		// $this->addToolbar();
+		$this->addToolbar();
 
 		$this->sidebar = Sidebar::render();
 		parent::display($tpl);
@@ -71,35 +69,12 @@ class HtmlView extends BaseHtmlView
 	 */
 	protected function addToolbar()
 	{
-		$state = $this->get('State');
-		$canDo = ChirpHelper::getActions();
-
-		ToolbarHelper::title(Text::_('COM_CHIRP_TITLE_CONTROLPANELS'), "generic");
+		ToolbarHelper::title(Text::_('COM_CHIRP_TITLE_CONTROLPANELS'));
 
 		$toolbar = Toolbar::getInstance('toolbar');
 
-		// Check if the form exists before showing the add/edit buttons
-		$formPath = JPATH_COMPONENT_ADMINISTRATOR . '/src/View/Controlpanels';
+		$toolbar->preferences('com_chirp');
 
-		if (file_exists($formPath))
-		{
-			if ($canDo->get('core.create'))
-			{
-				$toolbar->apply('component.apply');
-				$toolbar->divider();
-				$toolbar->save('component.save');
-				$toolbar->divider();
-				$toolbar->cancel('component.cancel');
-				$toolbar->divider();
-			}
-		}
-
-		if ($canDo->get('core.admin'))
-		{
-			$toolbar->preferences('com_chirp');
-		}
-
-		// Set sidebar action
 		Sidebar::setAction('index.php?option=com_chirp&view=controlpanels');
 	}
 

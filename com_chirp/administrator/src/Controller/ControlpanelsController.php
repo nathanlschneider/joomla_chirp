@@ -1,4 +1,5 @@
 <?php
+
 /**
  * @version    CVS: 0.1.0
  * @package    Com_Chirp
@@ -11,14 +12,9 @@ namespace Chirp\Component\Chirp\Administrator\Controller;
 
 \defined('_JEXEC') or die;
 
-use Joomla\CMS\Application\SiteApplication;
 use Joomla\CMS\Factory;
-use Joomla\CMS\Language\Multilanguage;
-use Joomla\CMS\Language\Text;
 use Joomla\CMS\MVC\Controller\AdminController;
-use Joomla\CMS\Router\Route;
-use Joomla\CMS\Uri\Uri;
-use Joomla\Utilities\ArrayHelper;
+use Joomla\CMS\Session\Session;
 
 /**
  * Controlpanels list controller class.
@@ -27,41 +23,6 @@ use Joomla\Utilities\ArrayHelper;
  */
 class ControlpanelsController extends AdminController
 {
-	/**
-	 * Method to clone existing Controlpanels
-	 *
-	 * @return  void
-	 *
-	 * @throws  Exception
-	 */
-	public function duplicate()
-	{
-		// Check for request forgeries
-		$this->checkToken();
-
-		// Get id(s)
-		$pks = $this->input->post->get('cid', array(), 'array');
-
-		try
-		{
-			if (empty($pks))
-			{
-				throw new \Exception(Text::_('COM_CHIRP_NO_ELEMENT_SELECTED'));
-			}
-
-			ArrayHelper::toInteger($pks);
-			$model = $this->getModel();
-			$model->duplicate($pks);
-			$this->setMessage(Text::_('COM_CHIRP_ITEMS_SUCCESS_DUPLICATED'));
-		}
-		catch (\Exception $e)
-		{
-			Factory::getApplication()->enqueueMessage($e->getMessage(), 'warning');
-		}
-
-		$this->setRedirect('index.php?option=com_chirp&view=controlpanels');
-	}
-
 	/**
 	 * Proxy for getModel.
 	 *
@@ -73,7 +34,7 @@ class ControlpanelsController extends AdminController
 	 *
 	 * @since   0.1.0
 	 */
-	public function getModel($name = 'Controlpanel', $prefix = 'Administrator', $config = array())
+	public function getModel($name = 'Controlpanels', $prefix = 'Administrator', $config = array())
 	{
 		return parent::getModel($name, $prefix, array('ignore_request' => true));
 	}
@@ -87,21 +48,19 @@ class ControlpanelsController extends AdminController
 	 *
 	 * @throws  Exception
 	 */
-	public function saveOrderAjax()
+	public function saveConfig()
 	{
 		// Get the input
-		$pks   = $this->input->post->get('cid', array(), 'array');
-		$order = $this->input->post->get('order', array(), 'array');
+		$input = Factory::getApplication()->input;
+		$data = $input->json->get('data', null);
 
-		// Sanitize the input
-		ArrayHelper::toInteger($pks);
-		ArrayHelper::toInteger($order);
-
-		// Get the model
-		$model = $this->getModel();
+		if (!Session::checkToken())
+		{
+			die('Bad Token');
+		}
 
 		// Save the ordering
-		$return = $model->saveorder($pks, $order);
+		$return = self::getModel()->saveConfig($data);
 
 		if ($return)
 		{
@@ -109,6 +68,6 @@ class ControlpanelsController extends AdminController
 		}
 
 		// Close the application
-		Factory::getApplication()->close();
+		die;
 	}
 }
