@@ -1,14 +1,14 @@
 <?xml version="1.0" encoding="utf-8"?>
 <form>
+
+  <fieldset label="" name="activation">
+    <field name="chirpactivation" type="text" />
+  </fieldset>
   <fieldset label="" name="customSettings">
-    <field name="backgroundcolor" type="color" format="hex"
-      label="CHIRP_BACKGROUNDCOLOR" />
-    <field name="bordercolor" type="color" format="hex"
-      label="CHIRP_BORDERCOLOR" />
-    <field name="textcolor" type="color" format="hex"
-      label="CHIRP_TEXTCOLOR" />
-    <field name="linkcolor" type="color" format="hex"
-      label="CHIRP_LINKCOLOR" />
+    <field name="backgroundcolor" type="hidden" default="" />
+    <field name="bordercolor" type="hidden" default="" />
+    <field name="textcolor" type="hidden" default="" />
+    <field name="linkcolor" type="hidden" default="" />
   </fieldset>
   <fieldset label="" name="shopSettings">
     <field name="imagespath" type="text" default="" label="Images Path"
@@ -23,17 +23,6 @@
       <option value="easyshop">Easy Shop</option>
       <option value="hikashop">Hikashop</option>
       <option value="phocacart">Phocacart</option>
-    </field>
-    <field
-      name="usergroups"
-      type="UserGroupList"
-      label="COM_CHIRP_FORM_LBL_USERGROUPS"
-      description="COM_CHIRP_FORM_DESC_USERGROUPS"
-      layout="joomla.form.field.list-fancy-select"
-      checksuperusergroup="0"
-      default=""
-      multiple="1"
-    >
     </field>
     <field name="notificationlocation" type="list" label="COM_CHIRP_FORM_LBL_NOTIFICATIONLOCATION"
       description="COM_CHIRP_FORM_DESC_NOTIFICATIONLOCATION"
@@ -64,6 +53,17 @@
     <field name="chirpshowlength" type="text" class="validate-numeric" default="10"
       label="COM_CHIRP_FORM_DESC_LBL" description="COM_CHIRP_FORM_DESC_LENGTH"
       size="10" />
+    <field
+      name="usergroups"
+      type="UserGroupList"
+      label="COM_CHIRP_FORM_LBL_USERGROUPS"
+      description="COM_CHIRP_FORM_DESC_USERGROUPS"
+      layout="joomla.form.field.list-fancy-select"
+      checksuperusergroup="0"
+      default=""
+      multiple="1"
+    >
+    </field>
   </fieldset>
 
   <fieldset name="permissions" description="JCONFIG_PERMISSIONS_DESC"

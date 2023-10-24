@@ -1,10 +1,13 @@
 @import url(https://fonts.googleapis.com/css?family=Roboto);
 
 :root {
-	--box-shadow: #707c8929;
+	--box-shadow: #707c8983;
 	--dark-blue: #3d618f;
 	--blue: #2a69b8;
 	--green: #457d54;
+
+	--light-border: 1px solid #d6e1e9;
+	--border-radius: 10px;
 
 	--chirp_height: 100px;
 	--chirp_width: 400px;
@@ -12,6 +15,102 @@
 	--chirp_background-color: #fff;
 	--chirp_color: #000;
 	--chirp_border-color: rgba(0, 0, 0, 0.22);
+	--chirp_link-color: blue;
+}
+
+#noShopNotice {
+	display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    height: calc(100vh - 66px);
+}
+
+
+.chirp_tabs {
+	gap: 10px;
+	display: flex;
+	box-shadow: 0 2px 10px -8px var(--box-shadow);
+	margin-top: 40px;
+	margin-bottom: 40px;
+	background: #fff;
+	padding: 8px;
+	border-radius: var(--border-radius);
+	border: var(--light-border);
+}
+
+.chirp_tab {
+	padding: 10px 20px;
+	cursor: pointer;
+	background-color: #fff;
+	text-align: center;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	width: 160px;
+	transition: 0.2s all;
+	border-radius: var(--border-radius);
+}
+
+.chirp_tab:hover {
+	background-color: var(--dark-blue);
+	color: #fff;
+	font-weight: 500;
+	box-shadow: 0px 6px 6px var(--box-shadow);
+}
+
+.chirp_tab.active {
+	background-color: var(--dark-blue);
+	color: #fff;
+	font-weight: 500;
+	box-shadow: 0px 6px 6px var(--box-shadow);
+}
+
+.chirp_tab_content {
+	display: none;
+}
+
+.chirp_tab_content.active {
+	display: block;
+	animation: chirpFadeIn 0.5s ease-in-out;
+}
+
+
+#chirp_key {
+	grid-row: 2;
+	grid-column: 1;
+	border-top-left-radius: 10px;
+	border-bottom-left-radius: 10px;
+	border-right: none;
+}
+#chirp_activator_btn {
+	background: #1b609d;
+	color: #fff;
+	font-weight: 600;
+	border-top-left-radius: 0px;
+	border-bottom-left-radius: 0px;
+	grid-row: 2;
+	grid-column: 2;
+}
+
+#chirp_activator {
+	border-radius: 5px;
+	background: white;
+	padding: 30px;
+	margin: 20px 0;
+	max-width: 600px;
+	display: grid;
+	grid-template-rows: 1fr 1fr;
+	grid-template-columns: 1fr 1fr;
+}
+
+#chirpCustomPreview {
+	display: flex;
+	width: 500px;
+}
+
+#chirpTopLine > a {
+	color: var(--chirp_link-color) !important;
 }
 
 .chirp {
@@ -24,8 +123,7 @@
 
 	padding: 5px 5px 5px 0px;
 	border: 1px solid var(--chirp_border-color);
-	box-shadow: 0px 10px 35px -15px rgba(0, 0, 0, 0.35);
-	transition: 0.5s all;
+	box-shadow: 0px 10px 35px -15px var(--box-shadow);
 	overflow: hidden;
 	display: grid;
 	grid-template-columns: 33% 1fr;
@@ -37,12 +135,23 @@
 	margin: auto;
 }
 
+#chirp_main_content {
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	background-color: #fff;
+	border-radius: 10px;
+	box-shadow: var(--box-shadow);
+}
+
 #chirpCustomPreview {
+	border-radius: 20px;
 	background-image: linear-gradient(45deg, #808080 25%, transparent 25%),
 		linear-gradient(-45deg, #808080 25%, transparent 25%), linear-gradient(45deg, transparent 75%, #808080 75%),
 		linear-gradient(-45deg, transparent 75%, #808080 75%);
 	background-size: 20px 20px;
 	background-position: 0 0, 0 10px, 10px -10px, -10px 0px;
+	box-shadow: var(--box-shadow);
 }
 
 #chirpProductImage {
@@ -139,53 +248,6 @@
 	grid-column: 3 / span 4;
 }
 
-.chirp_tabs {
-	gap: 10px;
-	display: flex;
-	box-shadow: 0 2px 10px -8px var(--box-shadow);
-	margin-top: 40px;
-	margin-bottom: 40px;
-	background: white;
-	padding: 8px;
-	border-radius: 10px;
-}
-
-.chirp_tab {
-	padding: 10px 20px;
-	cursor: pointer;
-	background-color: #fff;
-	text-align: center;
-	display: flex;
-	align-items: center;
-	justify-content: center;
-	width: 160px;
-	transition: 0.2s all;
-	border-radius: 8px;
-}
-
-.chirp_tab:hover {
-	background-color: var(--dark-blue);
-	color: #fff;
-	font-weight: 500;
-	box-shadow: 0px 6px 6px var(--box-shadow);
-}
-
-.chirp_tab.active {
-	background-color: var(--dark-blue);
-	color: #fff;
-	font-weight: 500;
-	box-shadow: 0px 6px 6px var(--box-shadow);
-}
-
-.chirp_tab_content {
-	display: none;
-}
-
-.chirp_tab_content.active {
-	display: block;
-	animation: chirpFadeIn 0.5s ease-in-out;
-}
-
 #subhead-container {
 	display: none;
 }
@@ -235,4 +297,42 @@
 	100% {
 		opacity: 1;
 	}
+}
+
+.chirp_tab_content .control-group {
+	flex-direction: column;
+}
+
+.chirp_tab_content .control-group .controls {
+	display: flex;
+	flex-direction: row-reverse;
+	justify-content: space-between;
+	align-items: start;
+}
+
+.chirp_tab_content select,
+.chirp_tab_content [field-fancy-select],
+.chirp_tab_content input {
+	width: 300px;
+	justify-content: space-between;
+	display: flex;
+}
+
+.chirp_tab_content .control-label {
+	font-weight: 500;
+}
+
+.chirp_tab_content small.form_text {
+	font-weight: 300;
+}
+
+#chirpSettings > .control-group:last-of-type {
+	flex-direction: column;
+}
+#chirpSettings > .control-group:last-of-type .controls {
+	flex-direction: column-reverse;
+}
+
+#chirpSettings joomla-field-fancy-select {
+	width: 100%;
 }

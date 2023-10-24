@@ -28,6 +28,22 @@ class ControlpanelsModel extends ListModel
 	/**
 	 * Undocumented function
 	 *
+	 * @return void
+	 */
+	public function checkForInstalledShops()
+	{
+		$db = Factory::getContainer()->get('DatabaseDriver');
+		$query = $db->getQuery(true);
+		$query = "SELECT CASE WHEN ( SELECT COUNT(*) FROM `#__extensions` WHERE element IN ('com_eshop', 'com_easyshop', 'com_phocacart', 'com_hikashop') ) > 0 THEN 1 ELSE 0 END";
+		$db->setQuery($query);
+		$result = $db->loadResult();
+
+		return $result;
+	}
+
+	/**
+	 * Undocumented function
+	 *
 	 * @param  [type] $data
 	 * @return void
 	 */
